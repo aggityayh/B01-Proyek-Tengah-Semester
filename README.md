@@ -1,5 +1,5 @@
 **Nama Anggota:**
-- Aggitya Yosafat Hutabarat (2206082902)
+:blush: - Aggitya Yosafat Hutabarat (2206082902)
 - Catur Wira Mukti Nugroho (2206083483)
 - Dyandra Nadine Zahira (2206028264)
 - Gina Afia (2206830334)
