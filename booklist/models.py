@@ -12,3 +12,4 @@ class Book(models.Model):
     year = models.CharField(max_length=255, null=True, blank=True)
     subjects = models.TextField(null=True, blank=True)
     bookshelves = models.TextField(null=True, blank=True, default="-")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -37,9 +37,9 @@ aside > div {
 }
 
 aside > table, th{
+    text-align: center;
     padding-left: 20px;
     padding-right: 20px;
-    border: 1px solid;
 }
 
 aside > table, td{
@@ -47,7 +47,6 @@ aside > table, td{
     vertical-align: middle;
     padding-top: 10px;
     padding-bottom: 10px;
-    border: 1px solid;
 }
 
 footer {
