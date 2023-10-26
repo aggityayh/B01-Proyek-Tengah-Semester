@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Misalnya Main Page</h1>
+
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Publication year</th>
+        </tr>
+    
+        {% comment %} Berikut cara memperlihatkan data produk di bawah baris ini {% endcomment %}
+    
+        {% for book in books %}
+            <tr>
+                <td>{{book.title}}</td>
+                <td>{{book.year}}</td>
+                <td>
+                    <a href="{% url 'bookmarks:add_bookmark' book.id %}">
+                        <button>Add to Bookmark</button>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+    <br />
+    
+    <a href="{% url 'bookmarks:create_product' %}">
+        <button>
+            Add New Product
+        </button>
+    </a>
+    <a href="{% url 'bookmarks:show_bookmarks' %}">
+        <button>
+            Bookmarks
+        </button>
+    </a>
+    
+
+{% endblock content %}
+
+
+

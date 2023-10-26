@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+<!-- {% block meta %}
+    
+{% endblock meta %} -->
+{% block content %}
+    <h1>Bookmarks Page</h1>
+    <form method="POST" >
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Publication year</th>
+            </tr>
+            {% for bookmark in bookmarks %}
+                <tr>
+                    <td>{{ bookmark.title }}</td>
+                    <td>{{ bookmark.year }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td>You haven't bookmarked any books yet.</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </form>
+    
+    <a href="{% url 'bookmarks:show_main' %}">
+        <button>Back</button>
+    </a>
+    
+{% endblock content %}
