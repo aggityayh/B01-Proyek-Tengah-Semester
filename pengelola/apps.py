@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class AncestralreadsConfig(AppConfig):
+class PengelolaConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'AncestralReads'
+    name = 'pengelola'

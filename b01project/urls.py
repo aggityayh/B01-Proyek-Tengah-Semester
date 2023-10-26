@@ -19,5 +19,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('main/', include('AncestralReads.urls')),
+    path('pengelola/', include('pengelola.urls')),
 ]
