@@ -27,7 +27,7 @@
                                     {% csrf_token %}
                                     <div class="mb-3">
                                         <label for="buku" class="col-form-label">Buku:</label>
-                                        <select name="buku" id="buku" class="form-control" size="3">
+                                        <select name="buku" id="buku" class="form-control" size="10">
                                             {% for book in books %}
                                                 <option value="{{book.pk}}">{{book.title}}</option>
                                             {% endfor %}
