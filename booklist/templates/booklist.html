@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block meta %}
+<link rel="stylesheet" href="{% static 'booklist.css' %}">
+{% endblock meta %}
+
+{% block content %}
+    <header>{{ nameapp }}
+        <div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Tombol Add</button>
+        </div>
+    </header>
+    <aside>aside
+        <div>
+            <table id="book_table">
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Book</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="form" onsubmit="return false;">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="buku" class="col-form-label">Buku:</label>
+                                        <select name="buku" id="buku" class="form-control" size="3">
+                                            {% for book in books %}
+                                                <option value="{{book.pk}}">{{book.title}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Product</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </table>
+        </div>
+    </aside>
+    <footer>footer</footer>
+    <script>
+        async function getBooks() {
+            return fetch("{% url 'booklist:get_book_json' %}").then((res) => res.json())
+        }
+        async function refreshBook() {
+            document.getElementById("book_table").innerHTML = ""
+            const products = await getBooks()
+            let htmlString = `<tr>
+                <th>Text Number</th>
+                <th>Title</th>
+                <th>Language</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Year</th>
+                <th>Subject</th>
+                <th>Bookshelves</th>
+            </tr>`
+
+            for (const item of products) {
+                htmlString += `\n<tr>
+                <td>${item.fields.text_number}</td>
+                <td>${item.fields.title}</td>
+                <td>${item.fields.language}</td>
+                <td>${item.fields.first_name}</td>
+                <td>${item.fields.last_name}</td>
+                <td>${item.fields.year}</td>
+                <td>${item.fields.subjects}</td>
+                <td>${item.fields.bookshelves}</td>
+                </tr>`
+            }
+            document.getElementById("book_table").innerHTML = htmlString
+            document.getElementById("button_add").onclick = addBook
+        }
+        refreshBook()
+        function addBook() {
+            fetch("{% url 'booklist:add_book_ajax' %}", {
+                method: "POST",
+                body: new FormData(document.querySelector('#form'))
+            }).then(refreshBook)
+
+            document.getElementById("form").reset()
+            return false
+        }
+    </script>
+{% endblock content %}
