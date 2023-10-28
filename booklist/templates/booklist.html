@@ -12,8 +12,21 @@
             <h1>{{ nameapp }}</h1>
         </div>
         <div class="btn_header">
+            {% if user.is_anonymous %}
+            <a href="{% url 'pengelola:login' %}">
+                <button type="button" class="btn btn-secondary">Login</button>                
+            </a>
+            <a href="{% url 'pengelola:register' %}">
+                <button type="button" class="btn btn-secondary">Register</button>                
+            </a>
+            {% else %}
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="refreshBuku()">Tombol Add</button>
+            <a href="{% url 'pengelola:show_main' %}">
+                <button type="button" class="btn btn-secondary">Back</button>                
+            </a>
+            {% endif %}
         </div>
+
     </header>
     <aside>
         <div>
@@ -48,7 +61,7 @@
             </table>
         </div>
     </aside>
-    <footer>footer</footer>
+    <footer></footer>
     <script>
         async function getBooks() {
             return fetch("{% url 'booklist:get_book_json' %}").then((res) => res.json())

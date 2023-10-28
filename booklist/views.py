@@ -12,13 +12,17 @@ from django.http import JsonResponse
 
 # Create your views here.
 
-@login_required(login_url='/login/')
 def show_booklist(request):
     title_list = Book.objects.values_list('title', flat=True)
     books = Buku.objects.exclude(title__in=title_list)
+    try:
+        user = request.user
+    except:
+        user = None
 
     context = {
         'nameapp': 'AncestralReads',
+        'user': user,
         'books': books
     }
     return render(request, "booklist.html", context)
@@ -45,6 +49,7 @@ def add_book_ajax(request):
 
 @csrf_exempt
 def delete_book_ajax(request):
+    print(request.body)
     if request.method == "DELETE":
         try:
             id = json.loads(request.body.decode('utf-8')).get('pk')
