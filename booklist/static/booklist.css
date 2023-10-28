@@ -2,44 +2,59 @@ body {
     height: 770px;
 }
 header {
-    background-color: aqua;
-    height: 10%;
+    background-color: rgb(160, 160, 160);
+    height: 15%;
     position: relative;
 }
 
-header > div {
+.title_header {
+    position: absolute;
+    left: 40%;
+    top: 30%;
+    display: inline-block;
+}
+
+.btn_header {
     position: absolute;
     right: 5%;
+    top: 35%;
+    display: inline-block;
 }
 
 header > div > a {
     text-decoration: none;
-    background-color: red;
     padding: 10px;
     border: 1px solid black;
     border-radius: 10px;
 }
 
 aside {
-    background-color: blue;
+    background-color: gray;
     height: 80%;
-    position: relative;
 }
 
 aside > div {
-    background-color: blueviolet;
-    border: 1px solid black;
-    margin: 0 10px 0 10px;
     height: 95%;
-    position: absolute;
-    width: 99%;
+    width: 100%;
     overflow: auto;
+}
+
+table {
+    width: 100%;
+}
+
+table > thead {
+    position: sticky;
+    top: 0;
+    background-color: gray;
 }
 
 aside > table, th{
     text-align: center;
     padding-left: 20px;
     padding-right: 20px;
+    width: 11%;
+    height: 70px;
 }
 
 aside > table, td{
@@ -47,9 +62,10 @@ aside > table, td{
     vertical-align: middle;
     padding-top: 10px;
     padding-bottom: 10px;
+    height: 10px;
 }
 
 footer {
-    background-color: brown;
+    background-color: gray;
     height: 10%;
 }

@@ -7,12 +7,15 @@
 {% endblock meta %}
 
 {% block content %}
-    <header>{{ nameapp }}
-        <div>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Tombol Add</button>
+    <header>
+        <div class="title_header">
+            <h1>{{ nameapp }}</h1>
+        </div>
+        <div class="btn_header">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="refreshBuku()">Tombol Add</button>
         </div>
     </header>
-    <aside>aside
+    <aside>
         <div>
             <table id="book_table">
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -50,10 +53,13 @@
         async function getBooks() {
             return fetch("{% url 'booklist:get_book_json' %}").then((res) => res.json())
         }
+        async function getBuku() {
+            return fetch("{% url 'booklist:get_buku_json' %}").then((res) => res.json())
+        }
         async function refreshBook() {
             document.getElementById("book_table").innerHTML = ""
             const products = await getBooks()
-            let htmlString = `<tr>
+            let htmlString = `<thead>
                 <th>Text Number</th>
                 <th>Title</th>
                 <th>Language</th>
@@ -62,10 +68,11 @@
                 <th>Year</th>
                 <th>Subject</th>
                 <th>Bookshelves</th>
-            </tr>`
+                <th></th>
+            </thead>`
 
             for (const item of products) {
-                htmlString += `\n<tr>
+                htmlString += `\n<tbody>
                 <td>${item.fields.text_number}</td>
                 <td>${item.fields.title}</td>
                 <td>${item.fields.language}</td>
@@ -74,20 +81,41 @@
                 <td>${item.fields.year}</td>
                 <td>${item.fields.subjects}</td>
                 <td>${item.fields.bookshelves}</td>
-                </tr>`
+                <td><input type="button" onclick="deleteBook(${item.pk})" value="Delete"></td>
+                </tbody>`
             }
             document.getElementById("book_table").innerHTML = htmlString
             document.getElementById("button_add").onclick = addBook
         }
+        async function refreshBuku() {
+            document.getElementById("buku").innerHTML = ""
+            const products = await getBuku()
+            let htmlString = ``
+            for (const item of products) {
+                htmlString += `
+                <option value="${item.pk}">${item.fields.title}</option>
+                `
+            }
+            document.getElementById("buku").innerHTML = htmlString
+        }
         refreshBook()
+        refreshBuku()
         function addBook() {
             fetch("{% url 'booklist:add_book_ajax' %}", {
                 method: "POST",
                 body: new FormData(document.querySelector('#form'))
-            }).then(refreshBook)
+            }).then(refreshBook, refreshBuku)
 
             document.getElementById("form").reset()
             return false
+        }
+        function deleteBook(id) {
+            console.log("Tombol delete ditekan")
+            mydata = {pk:id}
+            fetch("{% url 'booklist:delete_book_ajax' %}", {
+                method: "DELETE",
+                body: JSON.stringify(mydata)    
+            }).then(refreshBook, refreshBuku)
         }
     </script>
 {% endblock content %}
