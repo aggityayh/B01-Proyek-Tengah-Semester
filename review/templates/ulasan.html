@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ulasan Buku</title>
+</head>
+<body>
+    <h1>Ulasan Buku</h1>
+    
+    <table id="review_table">
+        <tr>
+            <th>Reviewer Name</th>
+            <th>Review Text</th>
+            <th>Rating</th>
+            <th>Review Date</th>
+        </tr>
+        <!-- Daftar ulasan akan ditampilkan di sini -->
+    </table>
+    
+    <h2>Tambah Ulasan</h2>
+    <form id="review-form">
+        <input type="hidden" name="buku_id" value="{{ buku_id }}">
+        <input type="text" name="reviewer_name" placeholder="Nama Reviewer">
+        <textarea name="review_text" placeholder="Ulasan"></textarea>
+        <input type="number" name="rating" placeholder="Rating">
+        <button type="submit" onclick="addUlasan()">Tambah Ulasan</button>
+    </form>
+</body>
+</html>
+
+<script>
+    async function getReviews() {
+        return fetch("{% url 'review:get_ulasan_json' %}").then((res) => res.json())
+    }
+
+    async function refreshReviews() {
+        document.getElementById("review_table").innerHTML = "";
+        const reviews = await getReviews();
+        let htmlString = `<tr>
+            <th>Reviewer Name</th>
+            <th>Review Text</th>
+            <th>Rating</th>
+            <th>Review Date</th>
+        </tr>`;
+        reviews.forEach((item) => {
+            htmlString += `\n<tr>
+            <td>${item.fields.reviewer_name}</td>
+            <td>${item.fields.review_text}</td>
+            <td>${item.fields.rating}</td>
+            <td>${item.fields.review_date}</td>
+        </tr>` 
+        })
+        
+        document.getElementById("review_table").innerHTML = htmlString;
+    }
+
+    //refreshReviews() // Jangan panggil ini saat halaman pertama dimuat
+
+    function addUlasan() {
+        fetch("{% url 'review:add_review_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#review-form'))
+        }).then(() => {
+            refreshReviews(); // Panggil refreshReviews setelah menambahkan ulasan
+        });
+
+        document.getElementById("review-form").reset();
+        return false;
+    }
+</script>
+
+{% endblock content %}
