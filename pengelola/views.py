@@ -97,15 +97,14 @@ def tambah_buku(request):
 def edit_buku(request, id):
     buku = get_object_or_404(Buku, text_number = id)
     if request.method == 'POST' :
-        buku.text_number = request.POST.get("text_number")
-        buku.title = request.POST.get("title")
-        buku.language = request.POST.get("language")
-        buku.first_name = request.POST.get('first_name')
-        buku.last_name = request.POST.get('last_name')
-        buku.year = request.POST.get('year')
-        buku.subjects = request.POST.get('subjects')
-        buku.bookshelves = request.POST.get('bookshelves')
-        buku.asave()
+        buku.title = request.POST.get("title2")
+        buku.language = request.POST.get("language2")
+        buku.first_name = request.POST.get('first_name2')
+        buku.last_name = request.POST.get('last_name2')
+        buku.year = request.POST.get('year2')
+        buku.subjects = request.POST.get('subjects2')
+        buku.bookshelves = request.POST.get('bookshelves2')
+        buku.save()
 
         return HttpResponse(b"UPDATED", status=202)
     return HttpResponseNotFound()
@@ -113,5 +112,11 @@ def edit_buku(request, id):
 @csrf_exempt
 def hapus_buku(request, id):
     buku = get_object_or_404(Buku, text_number = id)
-    buku.adelete()
+    buku.delete()
+    return HttpResponse(b"DELETED", status=202)
+
+@csrf_exempt
+def emergency_hapus_buku(request, id):
+    buku = get_object_or_404(Buku, pk = id)
+    buku.delete()
     return HttpResponse(b"DELETED", status=202)

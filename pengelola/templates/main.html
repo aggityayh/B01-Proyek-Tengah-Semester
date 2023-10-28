@@ -53,6 +53,9 @@
     </div>
 </body>
 
+{% block modal %}
+{% endblock modal%}
+
 <script>
     async function getData() {
         return fetch("{% url 'pengelola:display_books' %}").then((res) => res.json())
