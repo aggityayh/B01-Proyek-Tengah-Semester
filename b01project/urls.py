@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    path('', include('request_book.urls')),
+    path('request_book/', include('request_book.urls')),
     path('admin/', admin.site.urls),
     path('bookmarks/', include('bookmarks.urls')),
     path('pengelola/', include('pengelola.urls')),

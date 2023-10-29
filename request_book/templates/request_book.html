@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <style>
+        body {
+            background-color: #dac292;
+        }
+    </style>
+    <style>
+        table.table thead tr td:first{
+            background-color: #b9936c;
+            color: black;
+        }
+    </style>
+    
+    <style>
+        table.table tbody tr:last-child td{
+            background-color: rgb(19, 7, 73);
+            color: rgb(170, 171, 179);
+        }
+    </style>
+    
+
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">AncestralReads</span>
+        <div class="d-flex justify-content-end">
+    </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mx-auto mt-3">
+                    <div class="card-body text-center">
+                        <p class="card-text">Make your book request here!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .custom-card {
+            width: 90%;
+            margin: 20px auto;
+        }
+    </style>
+    
+    <div class="card custom-card">
+        <div class="card-body">
+            <table id="product_table" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th style="white-space: nowrap; background-color:lightblue">Title</th>
+                        <th style="white-space: nowrap; background-color:lightblue">Language</th>
+                        <th style="white-space: nowrap; background-color:lightblue">First Name</th>
+                        <th style="white-space: nowrap; background-color:lightblue">Last Name</th>
+                        <th style="white-space: nowrap; background-color:lightblue">Year</th>
+                        <th style="white-space: nowrap; background-color:lightblue">Subjects</th>
+                    </tr>
+                </thead>
+            </table>
+            <div id="product_cards" class="card-container">
+            </div>
+            <p class="text-center">Kamu menyimpan <span id="item-count">{{items}}</span> request disini<p>
+            <div style="text-align: center;">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Create request by AJAX</button>
+            </div>
+        </div>
+    </div>
+    
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Request</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form" onsubmit="return false;">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="col-form-label">Title:</label>
+                            <input type="text" class="form-control" id="title" name="title"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="language" class="col-form-label">Language:</label>
+                            <input type="text" class="form-control" id="language" name="language"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="first_name" class="col-form-label">First Name:</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="last_name" class="col-form-label">Last Name:</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Year" class="col-form-label">Year:</label>
+                            <input type="number" class="form-control" id="year" name="year"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subjects" class="col-form-label">Subjects:</label>
+                            <input type="text" class="form-control" id="subjects" name="subjects"></input>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="container text-center mt-3">
+        <h5 style="color: black ;">Sesi terakhir login: {{ last_login }}</h5>
+    </div>
+
+    
+
+    <script>
+        async function getProducts() {
+        return fetch("{% url 'request_book:get_product_json' %}").then((res) => res.json())
+        }
+
+        async function refreshProducts() {
+            const products = await getProducts();
+            const itemCountElement = document.getElementById("item-count");
+
+            itemCountElement.textContent = products.length;
+                let htmlString = `<table id="product_table" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Language</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Year</th>
+                            <th>Subjects</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+                        
+                
+            products.forEach((item) => {
+                htmlString += `
+                    <tr>
+                        <td>${item.fields.title}</td>
+                        <td>${item.fields.language}</td>
+                        <td>${item.fields.first_name}</td>
+                        <td>${item.fields.last_name}</td>
+                        <td>${item.fields.year}</td>
+                        <td>${item.fields.subjects}</td>
+                        <td class="action-column">
+                            <div class="btn-group" role="group">
+                                <a href="edit-product/${item.pk}">
+                                    <button type="submit" class="btn custom-btn3">Edit</button>
+                                </a>
+                                <a href="decrease_amount/${item.pk}/">
+                                    <button type="submit" class="btn custom-btn2">Delete</button>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>`;
+            });
+
+            htmlString += `</tbody></table>`;
+            
+            document.getElementById("product_table").innerHTML = htmlString;
+
+            const cardContainer = document.getElementById("product_cards");
+
+            cardContainer.innerHTML = "";
+
+            products.forEach((item) => {
+                // Create a card for each item
+                const card = document.createElement("div");
+                card.className = "product-card";
+
+                card.innerHTML = `
+                <h3>${item.fields.title}</h3>
+                <p><strong>Year:</strong> ${item.fields.year}</p>
+                <p><strong>Subjects:</strong> ${item.fields.subjects}</p>
+                <div class="action-buttons">
+                    <div class="edit-delete-buttons">
+                        <a href="edit-product/${item.pk}" class="btn custom-btn3">Edit</a>
+                    </div>
+                    <div class="price-buttons">
+                        <a href="decrease_amount/${item.pk}" class="btn custom-btn2">Delete</a>
+                    </div>
+                </div>
+                `;
+
+                cardContainer.appendChild(card);
+            });
+    }
+
+    function deleteProduct(button, id) {
+        let url = button.getAttribute('data-url').replace('123', id);
+        fetch(url, {
+            method: "DELETE",
+        }).then(refreshProducts)
+    }
+
+
+    refreshProducts();
+
+
+    function addProduct() {
+    console.log("Function Called"); // Tambahkan ini untuk memeriksa apakah fungsi dijalankan
+    fetch("{% url 'request_book:add_product_ajax' %}", {
+        method: "POST",
+        body: new FormData(document.querySelector('#form'))
+    }).then(refreshProducts)
+
+    document.getElementById("form").reset()
+    return false
+}
+
+
+    document.getElementById("button_add").onclick = addProduct
+
+    </script>
+
+<style>
+    .card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    }
+
+    .product-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    background-color: #c6bcb6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: calc(33.33% - 20px);
+    box-sizing: border-box;
+    text-align: center;
+    }
+
+    .product-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-card h3 {
+    font-size: 20px;
+    }
+
+    .product-card p {
+    margin: 5px 0;
+    }
+
+    .action-buttons {
+    margin-top: 10px;
+    }
+
+    .custom-btn1, .custom-btn2, .custom-btn3, .custom-btn4 {
+        text-decoration: none;
+        padding: 5px 15px;
+        margin: 5px;
+        border-radius: 5px;
+        color: #ffffff;
+        width: 150px;
+    }
+    
+
+    .custom-btn1 {
+    background-color: rgb(203, 55, 55);
+    }
+
+    .custom-btn2 {
+    background-color: rgb(203, 55, 55);
+    }
+
+    .custom-btn3 {
+    background-color: rgb(105, 177, 59);
+    color: black;
+    }
+
+    .custom-btn4 {
+    background-color: red;
+    }
+
+    @media screen and (max-width: 768px) {
+    .product-card {
+        width: calc(50% - 20px);
+    }
+    }
+
+    @media screen and (max-width: 480px) {
+    .product-card {
+        width: 100%;
+    }
+    }
+
+
+</style>
+
+{% endblock content %}
