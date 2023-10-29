@@ -16,7 +16,6 @@
                 View Bookmarks
             </button>
         </a>
-        
     </div>
 </nav>
 
@@ -51,13 +50,15 @@
                     <td>Language</td>
                     <td>Subjects</td>
                     <td>Type/Categories</td>
-                    <td></td>
                 </tr>
             </thead>
             <tbody class="overflow-auto" id="table_buku" style="max-height: 400px;"></tbody>
         </table>
     </div>
 </body>
+
+{% block modal %}
+{% endblock modal%}
 
 <script>
     async function getData() {
@@ -102,8 +103,9 @@
             alert('Failed to add book to bookmarks');
         }
     }
-    
 </script>
+{% block funct %}
+{% endblock funct %}
 
 <style>
     .mysidebar{

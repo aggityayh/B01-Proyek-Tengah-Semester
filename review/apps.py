@@ -1,6 +1,5 @@
 from django.apps import AppConfig
 
-class PengelolaConfig(AppConfig):
+class ReviewConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'pengelola'
-
+    name = 'review'

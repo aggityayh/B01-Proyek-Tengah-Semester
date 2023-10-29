@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block meta %}
+<link rel="stylesheet" href="{% static 'css/booklist.css' %}">
+{% endblock meta %}
+
+{% block content %}
+    <header>
+        <div class="title_header">
+            <h1>{{ nameapp }}</h1>
+        </div>
+        <div class="btn_header">
+            {% if user.is_anonymous %}
+            <a href="{% url 'pengelola:login' %}?next={% url 'booklist:show_booklist' %}">
+                <button type="button" class="btn btn-secondary">Login</button>                
+            </a>
+            <a href="{% url 'pengelola:register' %}">
+                <button type="button" class="btn btn-secondary">Register</button>                
+            </a>
+            {% else %}
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="refreshBuku()">Tombol Add</button>
+            <a href="{% url 'pengelola:show_main' %}">
+                <button type="button" class="btn btn-secondary">Back</button>                
+            </a>
+            {% endif %}
+        </div>
+    </header>
+    <aside>
+        <div>
+            <table id="book_table">
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Book</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="form" onsubmit="return false;">
+                                    {% csrf_token %}
+                                    <div class="input-group mb-3 mx-auto justify-content-center">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="inputGroupSelect01">Options</label>
+                                        </div>
+                                        {{ form.addBook_field }}
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Product</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </table>
+        </div>
+    </aside>
+    <footer>
+        <p>Muhammad Hanif - 2206029941 - PBP B</p>
+    </footer>
+    <script> // For Fetch URL.
+        const getBookJsonUrl = "{% url 'booklist:get_book_json' %}";
+        const getBukuJsonUrl = "{% url 'booklist:get_buku_json' %}";
+        const addBookJsonUrl = "{% url 'booklist:add_book_ajax' %}";
+        const deleteBookJsonUrl = "{% url 'booklist:delete_book_ajax' %}";
+    </script>
+    <script src="{% static 'js/jsbooklist.js' %}"></script>
+{% endblock content %}
