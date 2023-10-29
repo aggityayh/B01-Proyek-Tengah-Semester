@@ -139,13 +139,25 @@
 </style>
 </head>
 
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #104568 !important">
+        <div class="container-fluid">
+        <a class="navbar-brand" href="#" style="color:#fff !important">Navbar</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+            <a class="nav-link active" aria-current="page" href="#" style="color:#fff !important">Username : {{nama}}</a>
+            <a class="nav-link" href="{% url 'pengelola:show_main' %}" style="color:#fff !important">Back to Homepage</a>
+            </div>
+        </div>
+        </div>
+    </nav>
+
 <body>
 
     <div class="header">
-        <h1>Selamat datang di Ulasan Buku, {{nama}}!</h1>
-        <a href="{% url 'pengelola:show_main' %}">
-            <button type="button" class="btn btn-secondary">Back</button>                
-        </a>
+        <h1>Selamat datang di Ulasan Buku</h1>
     </div>
 
     <h2 style="font-size: 18px; color: #333; text-align: center; padding: 10px; background-color: #f1f1f1;">
@@ -158,7 +170,6 @@
 
     <table id="review_table">
     </table>
-
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
