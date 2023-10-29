@@ -42,6 +42,9 @@ def get_buku_json(request):
 def add_book_ajax(request):
     if request.method == 'POST':
         book_temp = Buku.objects.get(pk=request.POST.get("addBook_field"))
+        title_list = Book.objects.values_list('title', flat=True)
+        if book_temp.title in title_list:
+            return HttpResponse(b"DUPLICATE", status=201)
         new_book = Book(text_number=book_temp.text_number, title=book_temp.title, language=book_temp.language, first_name=book_temp.first_name, last_name=book_temp.last_name, year=book_temp.year, subjects=book_temp.subjects, bookshelves=book_temp.bookshelves, user=request.user)
         new_book.save()
         
