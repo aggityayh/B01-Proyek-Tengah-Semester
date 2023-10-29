@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <style>
+        body {
+            background-color: #16191c;
+        }
+    </style>
+    <style>
+        table.table thead tr td:first{
+            background-color: rgb(202, 255, 136);
+            color: black;
+        }
+    </style>
+    
+    <style>
+        table.table tbody tr:last-child td{
+            background-color: rgb(19, 7, 73);
+            color: white;
+        }
+    </style>
+    
+
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">AncestralReads</span>
+        <div class="d-flex justify-content-end">
+    </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mx-auto mt-3">
+                    <div class="card-body text-center">
+                        <p class="card-text">Make a book request here!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .custom-card {
+            width: 90%;
+            margin: 20px auto;
+        }
+    </style>
+    
+    <div class="card custom-card">
+        <div class="card-body">
+            <table id="book_table" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th style="white-space: nowrap; background-color:lightblue">Title</th>
+                        <th style="white-space: nowrap; background-color:lightblue">Language</th>
+                        <th style="white-space: nowrap; background-color:lightblue">First Name</th>
+                        <th style="white-space: nowrap; background-color:lightblue">Last Name</th>
+                        <th style="white-space: nowrap; background-color:lightblue">Year</th>
+                        <th style="white-space: nowrap; background-color:lightblue">Subjects</th>
+                    </tr>
+                </thead>
+            </table>
+            <div id="books_cards" class="card-container">
+            </div>
+            <div style="text-align: center;">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Request by AJAX</button>
+            </div>
+        </div>
+    </div>
+    
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Book Request</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form" onsubmit="return false;">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="col-form-label">Title:</label>
+                            <input type="text" class="form-control" id="title" name="title"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="language" class="col-form-label">Language:</label>
+                            <input type="text" class="form-control" id="language" name="language"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="first_name" class="col-form-label">First Name:</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="last_name" class="col-form-label">Last Name:</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Year" class="col-form-label">Year:</label>
+                            <input type="number" class="form-control" id="year" name="year"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subjects" class="col-form-label">Subjects:</label>
+                            <input type="text" class="form-control" id="subjects" name="subjects"></input>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Book Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        async function getBooks() {
+        return fetch("{% url 'request_book:get_book_json' %}").then((res) => res.json())
+        }
+
+        async function refreshBooks() {
+            const books = await getBooks();
+
+                let htmlString = `<table id="book_table" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Language</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Year</th>
+                            <th>Subjects</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            htmlString += `</tbody></table>`;
+            
+            document.getElementById("book_table").innerHTML = htmlString;
+
+            const cardContainer = document.getElementById("book_cards");
+
+            cardContainer.innerHTML = "";
+    }
+
+    refreshBooks();
+
+
+    function addBook() {
+        fetch("{% url 'request_book:create_request_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshBooks)
+
+        document.getElementById("form").reset()
+        return false
+    }
+
+    document.getElementById("button_add").onclick = addBook
+    
+
+    </script>
+
+<style>
+    .card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    }
+
+    .book-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: calc(33.33% - 20px);
+    box-sizing: border-box;
+    text-align: center;
+    }
+
+    .book-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .book-card h3 {
+    font-size: 20px;
+    }
+
+    .book-card p {
+    margin: 5px 0;
+    }
+
+    .action-buttons {
+    margin-top: 10px;
+    }
+
+    .custom-btn1, .custom-btn2, .custom-btn3, .custom-btn4 {
+        text-decoration: none;
+        padding: 5px 15px;
+        margin: 5px;
+        border-radius: 5px;
+        color: #fff;
+        width: 150px;
+    }
+    
+
+    .custom-btn1 {
+    background-color: grey;
+    }
+
+    .custom-btn2 {
+    background-color: grey;
+    }
+
+    .custom-btn3 {
+    background-color: yellow;
+    color: black;
+    }
+
+    .custom-btn4 {
+    background-color: red;
+    }
+
+    @media screen and (max-width: 768px) {
+    .book-card {
+        width: calc(50% - 20px);
+    }
+    }
+
+    @media screen and (max-width: 480px) {
+    .book-card {
+        width: 100%;
+    }
+    }
+
+
+</style>
+
+{% endblock content %}
