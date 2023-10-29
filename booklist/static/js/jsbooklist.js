@@ -46,6 +46,7 @@ async function refreshBuku() {
 refreshBook();
 refreshBuku();
 function addBook() {
+    console.log()
     fetch(addBookJsonUrl, {
         method: "POST",
         body: new FormData(document.querySelector('#form'))

@@ -43,13 +43,8 @@
                                     <div class="input-group mb-3 mx-auto justify-content-center">
                                         <div class="input-group-prepend">
                                             <label class="input-group-text" for="inputGroupSelect01">Options</label>
-                                          </div>
-                                        <select name="buku" id="inputGroupSelect01" class="custom-select">
-                                            <option selected>Choose...</option>
-                                            {% for book in books %}
-                                                <option value="{{book.pk}}">{{book.title}}</option>
-                                            {% endfor %}
-                                        </select>
+                                        </div>
+                                        {{ form.addBook_field }}
                                     </div>
                                 </form>
                             </div>
