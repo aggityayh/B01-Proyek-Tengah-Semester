@@ -89,6 +89,7 @@ def edit_product(request, id):
 
 @csrf_exempt
 def add_product_ajax(request):
+    print(request.POST)
     if request.method == 'POST':
         title = request.POST.get("title")
         language = request.POST.get("language")
@@ -96,8 +97,10 @@ def add_product_ajax(request):
         last_name = request.POST.get("last_name")
         year = request.POST.get("year")
         subjects = request.POST.get("subjects")
+        user = request.user
+        amount = 0
 
-        new_product = Product(title=title, language=language, first_name=first_name, last_name=last_name, year=year, subjects=subjects)
+        new_product = Product(title=title, language=language, first_name=first_name, last_name=last_name, year=year, subjects=subjects, user=user, amount=amount)
         new_product.save()
 
         return HttpResponse(b"CREATED", status=201)

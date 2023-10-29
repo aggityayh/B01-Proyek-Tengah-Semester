@@ -9,3 +9,4 @@ class Product(models.Model):
     year = models.IntegerField(null=True, blank=True)
     subjects = models.TextField(null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.IntegerField()

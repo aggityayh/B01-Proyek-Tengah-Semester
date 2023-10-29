@@ -151,20 +151,19 @@
                 htmlString += `
                     <tr>
                         <td>${item.fields.title}</td>
+                        <td>${item.fields.language}</td>
+                        <td>${item.fields.first_name}</td>
+                        <td>${item.fields.last_name}</td>
                         <td>${item.fields.year}</td>
                         <td>${item.fields.subjects}</td>
                         <td class="action-column">
                             <div class="btn-group" role="group">
-                                <a href="increase_amount/${item.pk}/">
-                                    <button type="submit" class="btn custom-btn1">+</button>
-                                </a>
-                                <a href="decrease_amount/${item.pk}/">
-                                    <button type="submit" class="btn custom-btn2">-</button>
-                                </a>
                                 <a href="edit-product/${item.pk}">
                                     <button type="submit" class="btn custom-btn3">Edit</button>
                                 </a>
-                                <button class="btn custom-btn4" data-url="{% url 'request_book:delete_product_ajax' 123 %}" onclick="deleteProduct(this, ${item.pk})">Delete</button>
+                                <a href="decrease_amount/${item.pk}/">
+                                    <button type="submit" class="btn custom-btn2">Delete</button>
+                                </a>
                             </div>
                         </td>
                     </tr>`;
@@ -188,13 +187,11 @@
                 <p><strong>Year:</strong> ${item.fields.year}</p>
                 <p><strong>Subjects:</strong> ${item.fields.subjects}</p>
                 <div class="action-buttons">
-                    <div class="price-buttons">
-                        <a href="increase_amount/${item.pk}" class="btn custom-btn1">+</a>
-                        <a href="decrease_amount/${item.pk}" class="btn custom-btn2">-</a>
-                    </div>
                     <div class="edit-delete-buttons">
                         <a href="edit-product/${item.pk}" class="btn custom-btn3">Edit</a>
-                        <button class="btn custom-btn4" data-url="{% url 'request_book:delete_product_ajax' 123 %}" onclick="deleteProduct(this, ${item.pk})">Delete</button>
+                    </div>
+                    <div class="price-buttons">
+                        <a href="decrease_amount/${item.pk}" class="btn custom-btn2">Delete</a>
                     </div>
                 </div>
                 `;
