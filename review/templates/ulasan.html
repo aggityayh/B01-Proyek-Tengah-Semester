@@ -1,160 +1,27 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
+{% block meta %}
+<link rel="stylesheet" href="{% static 'css/ulasan.css' %}">
+{% endblock meta %}
+
 {% block content %}
-
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-    /* Style untuk header */
-    .header {
-        background-color: #625750;
-        padding: 20px;
-        text-align: center;
-        color: yellow;
-        margin-bottom: 20px;
-    }
-
-    /* Style untuk footer */
-    .footer {
-        background-color: #625750;
-        padding: 10px;
-        text-align: center;
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-    }
-
-    #review_table {
-        font-family: Arial, sans-serif;
-        width: 85%;
-        border-collapse: collapse;
-        text-align: center;
-        margin: 0 auto; /* Menengahkan tabel horizontal di halaman */
-        padding: 20px;
-    }
-
-    #review_table td, #review_table th {
-        border: 1px solid #070707;
-        padding: 8px;
-        margin-bottom: 20px;
-    }
-
-    #review_table tr:nth-child(even){
-        background-color: #e6e2d3;
-    }
-
-    #review_table tr:nth-child(odd){
-        background-color: #e6e2d3;
-    }
-
-    #review_table tr:hover {
-        background-color: #e0e2e4;
-        text-align: center;
-    }
-
-    #review_table th {
-        padding-top: 12px;
-        padding-bottom: 12px;
-        text-align: center;
-        background-color: #625750;
-        color: #e0e2e4;
-    }
-
-    .modal-dialog {
-        max-width: 600px; 
-    }
-
-    .modal-content {
-        border-radius: 15px;
-        box-shadow: 0 4px 8px rgba(104, 98, 98, 0.884);
-    }
-
-    .modal-header {
-        background-color: #625750; 
-        color: #f7f1f1; 
-        border-radius: 10px 10px 0 0; 
-        padding: 15px;
-    }
-
-    .btn-close {
-        color: #1a56ee;
-    }
-
-    /* Style the modal body */
-    .modal-body {
-        padding: 20px; 
-        background-color: #e6e2d3;
-    }
-
-    /* Style form elements */
-    select, input[type="text"], textarea {
-        width: 100%;
-        padding: 10px;
-        margin: 5px 0;
-        border: 1px solid #c3c1c0;
-        border-radius: 5px;
-        background-color: #f7f9fc;
-    }
-
-    .rating input[type="radio"] {
-        display: default;
-    }
-
-    .rating label {
-        cursor: pointer;
-        padding: 5px;
-    }
-
-    .rating label:before {
-        content: "\2605"; 
-        font-size: 20px;
-        color: #625750; 
-    }
-
-    .rating input[type="radio"]:checked ~ label:before {
-        color: #fddb27; 
-    }
-
-    .modal-footer {
-        border-radius: 0 0 10px 10px;
-        padding: 15px;
-        background-color: #625750;
-    }
-
-    .btn-primary {
-        background-color: #dac292; 
-        color: #47403b; 
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-
-    .btn-secondary {
-        position: absolute;
-        top: 10px; 
-        left: 10px; 
-    }
-
-</style>
-</head>
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #104568 !important">
         <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="color:#fff !important">Navbar</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-            <a class="nav-link active" aria-current="page" href="#" style="color:#fff !important">Username : {{nama}}</a>
-            <a class="nav-link" href="{% url 'pengelola:show_main' %}" style="color:#fff !important">Back to Homepage</a>
+            <a class="navbar-brand" href="#" style="color:#fff !important">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link active" aria-current="page" href="#" style="color:#fff !important">Username : {{nama}}</a>
+                    <a class="nav-link" href="{% url 'pengelola:show_main' %}" style="color:#fff !important">Back to Homepage</a>
+                </div>
             </div>
         </div>
-        </div>
     </nav>
-
-<body>
 
     <div class="header">
         <h1>Selamat datang di Ulasan Buku</h1>
@@ -170,6 +37,7 @@
 
     <table id="review_table">
     </table>
+
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -250,76 +118,6 @@
   
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-left: 110px; margin-top: 30px;">Add Review Here!</button>
 
-    <script>      
-        document.getElementById('filterAlphabet').addEventListener('change', filterBooks);
-
-        async function filterBooks() {
-            const selectedAlphabet = document.getElementById('filterAlphabet').value;
-            const bookOptions = document.querySelectorAll('#buku option');
-            
-            bookOptions.forEach((option) => {
-                const bookAlphabet = option.getAttribute('data-alphabet');
-                if (!selectedAlphabet || bookAlphabet === selectedAlphabet) {
-                    option.style.display = 'block';
-                } else {
-                    option.style.display = 'none';
-                }
-            });
-        }
-
-        async function getReviews() {
-            return fetch("{% url 'review:get_ulasan_json' %}").then((res) => res.json())
-        }
-
-        async function refreshReviews() {
-            document.getElementById("review_table").innerHTML = "";
-            const reviews = await getReviews();
-            let htmlString = `<tr>
-                <th>Judul Buku</th>
-                <th>Nama</th>
-                <th>Deskripsi Ulasan</th>
-                <th>Rating Buku</th>
-                <th>Tanggal Ulasan</th>
-                <th>Hapus Review</th>
-            </tr>`;
-            reviews.forEach((item) => {
-                htmlString += `\n<tr>
-                <td>${item.buku__title}</td>
-                <td>${item.reviewer_name}</td>
-                <td>${item.review_text}</td>
-                <td>${item.rating}</td>
-                <td>${item.review_date}</td>
-                <td><input type="button" class="btn btn-primary" onclick="deleteItemAjax(${item.pk})" value="Delete"></td>
-            </tr>` 
-            })
-            
-            document.getElementById("review_table").innerHTML = htmlString;
-            document.getElementById("button_add").onclick = addUlasan
-        }
-
-        refreshReviews();
-
-        function addUlasan() {
-            fetch("{% url 'review:add_review_ajax' %}", {
-                method: "POST",
-                body: new FormData(document.querySelector('#review-form'))
-            }).then(() => {
-                refreshReviews();
-            });
-
-            document.getElementById("review-form").reset();
-            return false;
-        }
-
-        function deleteItemAjax(id) {
-            mydata = {pk:id}
-            fetch("{% url 'review:delete_ajax' %}", {
-                method: "DELETE",
-                body: JSON.stringify(mydata)    
-            }).then(refreshReviews)
-        }
-
-    </script>
-
+    <script src="{% static 'js/ulasan.js' %}"></script>
 
 {% endblock content %}
