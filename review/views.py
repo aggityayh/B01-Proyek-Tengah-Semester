@@ -21,6 +21,7 @@ def show_ulasan(request):
         'ulasan': ulasan,
         'books' : books,
         'nama' : request.user.username,
+        'user': request.user
     }
 
     return render(request, "ulasan.html", context)
