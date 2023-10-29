@@ -1,4 +1,5 @@
-from django.http import HttpResponse, HttpResponseNotFound
+import json
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from .models import Ulasan
@@ -12,11 +13,14 @@ from django.views.decorators.csrf import csrf_exempt
 
 @login_required(login_url='/login/')
 def show_ulasan(request):
+    ulasan = Ulasan.objects.filter(user=request.user)
     books = Buku.objects.all()
 
     context = {
         'name': 'AncestralReads',
-        'books': books
+        'ulasan': ulasan,
+        'books' : books,
+        'nama' : request.user.username,
     }
 
     return render(request, "ulasan.html", context)
@@ -39,8 +43,21 @@ def add_review_ajax(request):
     return HttpResponseNotFound()
 
 def get_ulasan_json(request):
-    review = Ulasan.objects.filter(user=request.user)
-    return HttpResponse(serializers.serialize('json', review))
+    review = Ulasan.objects.filter(user=request.user).values('pk', 'buku__title', 'reviewer_name', 'review_text', 'rating', 'review_date','user')
+    return JsonResponse(list(review), safe=False)
 
+@csrf_exempt
+def delete_ajax(request):
+    if request.method == "DELETE":
+        try:
+            id = json.loads(request.body.decode('utf-8')).get('pk')
+            book_temp = Ulasan.objects.get(pk=id)
+            book_temp.delete()
+            
+            return HttpResponse(b"DELETED", status=201)
+        except:
+            return HttpResponse(b"Not Found", status=201)
+
+    return HttpResponseNotFound()
 
 

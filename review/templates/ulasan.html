@@ -5,71 +5,310 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ulasan Buku</title>
+    <style>
+    /* Style untuk header */
+    .header {
+        background-color: #625750;
+        padding: 20px;
+        text-align: center;
+        color: yellow;
+        margin-bottom: 20px;
+    }
+
+    /* Style untuk footer */
+    .footer {
+        background-color: #625750;
+        padding: 10px;
+        text-align: center;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+    }
+
+    #review_table {
+        font-family: Arial, sans-serif;
+        width: 85%;
+        border-collapse: collapse;
+        text-align: center;
+        margin: 0 auto; /* Menengahkan tabel horizontal di halaman */
+        padding: 20px;
+    }
+
+    #review_table td, #review_table th {
+        border: 1px solid #070707;
+        padding: 8px;
+        margin-bottom: 20px;
+    }
+
+    #review_table tr:nth-child(even){
+        background-color: #e6e2d3;
+    }
+
+    #review_table tr:nth-child(odd){
+        background-color: #e6e2d3;
+    }
+
+    #review_table tr:hover {
+        background-color: #e0e2e4;
+        text-align: center;
+    }
+
+    #review_table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: center;
+        background-color: #625750;
+        color: #e0e2e4;
+    }
+
+    .modal-dialog {
+        max-width: 600px; 
+    }
+
+    .modal-content {
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(104, 98, 98, 0.884);
+    }
+
+    .modal-header {
+        background-color: #625750; 
+        color: #f7f1f1; 
+        border-radius: 10px 10px 0 0; 
+        padding: 15px;
+    }
+
+    .btn-close {
+        color: #1a56ee;
+    }
+
+    /* Style the modal body */
+    .modal-body {
+        padding: 20px; 
+        background-color: #e6e2d3;
+    }
+
+    /* Style form elements */
+    select, input[type="text"], textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #c3c1c0;
+        border-radius: 5px;
+        background-color: #f7f9fc;
+    }
+
+    .rating input[type="radio"] {
+        display: default;
+    }
+
+    .rating label {
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .rating label:before {
+        content: "\2605"; 
+        font-size: 20px;
+        color: #625750; 
+    }
+
+    .rating input[type="radio"]:checked ~ label:before {
+        color: #fddb27; 
+    }
+
+    .modal-footer {
+        border-radius: 0 0 10px 10px;
+        padding: 15px;
+        background-color: #625750;
+    }
+
+    .btn-primary {
+        background-color: #dac292; 
+        color: #47403b; 
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .btn-secondary {
+        position: absolute;
+        top: 10px; 
+        left: 10px; 
+    }
+
+</style>
 </head>
+
 <body>
-    <h1>Ulasan Buku</h1>
-    
+
+    <div class="header">
+        <h1>Selamat datang di Ulasan Buku, {{nama}}!</h1>
+        <a href="{% url 'pengelola:show_main' %}">
+            <button type="button" class="btn btn-secondary">Back</button>                
+        </a>
+    </div>
+
+    <h2 style="font-size: 18px; color: #333; text-align: center; padding: 10px; background-color: #f1f1f1;">
+        Disini kamu bisa menambahkan review buku-buku yang telah kamu baca dengan menekan tombol "add review here!", selain itu kamu juga bisa menghapus review bukumu jika merasa review yang diberikan tidak sesuai
+    </h2>    
+
+    <h3 style="font-size: 18px; color: #333; text-align: center; padding: 10px; background-color: #f1f1f1;">
+        Berikut adalah daftar buku yang telah kamu review: 
+    </h3>
+
     <table id="review_table">
-        <tr>
-            <th>Reviewer Name</th>
-            <th>Review Text</th>
-            <th>Rating</th>
-            <th>Review Date</th>
-        </tr>
-        <!-- Daftar ulasan akan ditampilkan di sini -->
     </table>
-    
-    <h2>Tambah Ulasan</h2>
-    <form id="review-form">
-        <input type="hidden" name="buku_id" value="{{ buku_id }}">
-        <input type="text" name="reviewer_name" placeholder="Nama Reviewer">
-        <textarea name="review_text" placeholder="Ulasan"></textarea>
-        <input type="number" name="rating" placeholder="Rating">
-        <button type="submit" onclick="addUlasan()">Tambah Ulasan</button>
-    </form>
-</body>
-</html>
 
-<script>
-    async function getReviews() {
-        return fetch("{% url 'review:get_ulasan_json' %}").then((res) => res.json())
-    }
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah Ulasan</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="review-form" onsubmit="return false;" style="width:100%;">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="filter" class="col-form-label" style="display: block; margin-bottom: 5px; text-align: center;">Filter buku sesuai abjad:</label >
+                                <select id="filterAlphabet">
+                                    <option value="">Semua</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                    <option value="D">D</option>
+                                    <option value="E">E</option>
+                                    <option value="F">F</option>
+                                    <option value="G">G</option>
+                                    <option value="H">H</option>
+                                    <option value="I">I</option>
+                                    <option value="J">J</option>
+                                    <option value="K">K</option>
+                                    <option value="L">L</option>
+                                    <option value="M">M</option>
+                                    <option value="N">N</option>
+                                    <option value="O">O</option>
+                                    <option value="P">P</option>
+                                    <option value="Q">Q</option>
+                                    <option value="R">R</option>
+                                    <option value="S">S</option>
+                                    <option value="T">T</option>
+                                    <option value="U">U</option>
+                                    <option value="V">V</option>
+                                    <option value="W">W</option>
+                                    <option value="X">X</option>
+                                    <option value="Y">Y</option>
+                                    <option value="Z">Z</option>                                   
+                                </select>                               
+                            </div>
+                            <div class="mb-3">
+                                <label for="buku" class="col-form-label">Judul buku:</label>
+                                <select name="buku" id="buku" class="form-control" size="10">
+                                    {% for book in books %}
+                                        <option value="{{ book.pk }}" data-alphabet="{{ book.title|first }}">{{ book.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reviewer_name" class="col-form-label">Nama:</label>
+                                <input type="text" name="reviewer_name" placeholder="Nama Reviewer" id="reviewer_name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="col-form-label">Ulasan buku:</label>
+                                <textarea name="review_text" placeholder="Ulasan" id="review_text"></textarea>                             
+                            </div>
+                            <div class="mb-3">
+                                <label for="rating" class="col-form-label" >Rating buku (poin):</label>
+                                <div class="rating">
+                                    <input type="radio" id="star5" name="rating" value="5"><label for="star5">+5</label>
+                                    <input type="radio" id="star4" name="rating" value="4"><label for="star4">+4</label>
+                                    <input type="radio" id="star3" name="rating" value="3"><label for="star3">+3</label>
+                                    <input type="radio" id="star2" name="rating" value="2"><label for="star2">+2</label>
+                                    <input type="radio" id="star1" name="rating" value="1"><label for="star1">+1</label>
+                                </div>                                
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Ulasan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+  
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-left: 110px; margin-top: 30px;">Add Review Here!</button>
 
-    async function refreshReviews() {
-        document.getElementById("review_table").innerHTML = "";
-        const reviews = await getReviews();
-        let htmlString = `<tr>
-            <th>Reviewer Name</th>
-            <th>Review Text</th>
-            <th>Rating</th>
-            <th>Review Date</th>
-        </tr>`;
-        reviews.forEach((item) => {
-            htmlString += `\n<tr>
-            <td>${item.fields.reviewer_name}</td>
-            <td>${item.fields.review_text}</td>
-            <td>${item.fields.rating}</td>
-            <td>${item.fields.review_date}</td>
-        </tr>` 
-        })
-        
-        document.getElementById("review_table").innerHTML = htmlString;
-    }
+    <script>      
+        document.getElementById('filterAlphabet').addEventListener('change', filterBooks);
 
-    //refreshReviews() // Jangan panggil ini saat halaman pertama dimuat
+        async function filterBooks() {
+            const selectedAlphabet = document.getElementById('filterAlphabet').value;
+            const bookOptions = document.querySelectorAll('#buku option');
+            
+            bookOptions.forEach((option) => {
+                const bookAlphabet = option.getAttribute('data-alphabet');
+                if (!selectedAlphabet || bookAlphabet === selectedAlphabet) {
+                    option.style.display = 'block';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+        }
 
-    function addUlasan() {
-        fetch("{% url 'review:add_review_ajax' %}", {
-            method: "POST",
-            body: new FormData(document.querySelector('#review-form'))
-        }).then(() => {
-            refreshReviews(); // Panggil refreshReviews setelah menambahkan ulasan
-        });
+        async function getReviews() {
+            return fetch("{% url 'review:get_ulasan_json' %}").then((res) => res.json())
+        }
 
-        document.getElementById("review-form").reset();
-        return false;
-    }
-</script>
+        async function refreshReviews() {
+            document.getElementById("review_table").innerHTML = "";
+            const reviews = await getReviews();
+            let htmlString = `<tr>
+                <th>Judul Buku</th>
+                <th>Nama</th>
+                <th>Deskripsi Ulasan</th>
+                <th>Rating Buku</th>
+                <th>Tanggal Ulasan</th>
+                <th>Hapus Review</th>
+            </tr>`;
+            reviews.forEach((item) => {
+                htmlString += `\n<tr>
+                <td>${item.buku__title}</td>
+                <td>${item.reviewer_name}</td>
+                <td>${item.review_text}</td>
+                <td>${item.rating}</td>
+                <td>${item.review_date}</td>
+                <td><input type="button" class="btn btn-primary" onclick="deleteItemAjax(${item.pk})" value="Delete"></td>
+            </tr>` 
+            })
+            
+            document.getElementById("review_table").innerHTML = htmlString;
+            document.getElementById("button_add").onclick = addUlasan
+        }
+
+        refreshReviews();
+
+        function addUlasan() {
+            fetch("{% url 'review:add_review_ajax' %}", {
+                method: "POST",
+                body: new FormData(document.querySelector('#review-form'))
+            }).then(() => {
+                refreshReviews();
+            });
+
+            document.getElementById("review-form").reset();
+            return false;
+        }
+
+        function deleteItemAjax(id) {
+            mydata = {pk:id}
+            fetch("{% url 'review:delete_ajax' %}", {
+                method: "DELETE",
+                body: JSON.stringify(mydata)    
+            }).then(refreshReviews)
+        }
+
+    </script>
+
 
 {% endblock content %}
