@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages  
 from django.contrib.auth import authenticate, login, logout
 from pengelola.models import Buku
-from pengelola.forms import FormBuku
+from pengelola.forms import FormBuku, FormUser
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
@@ -40,15 +40,14 @@ def display_books(request):
 
 
 def register(request):
-    form = UserCreationForm()
+    form = FormUser()
 
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = FormUser(request.POST)
         if form.is_valid():
             user = form.save()
-            if "pustakawan" in request.POST:
-                messages.success(request, 'Welcome new staff!')
-                user.is_staff = True
+            if user.is_staff == True:
+                messages.success(request, 'Welcome new staff!')   
                 return redirect('pengelola:login')
             messages.success(request, 'Your account has been successfully created!')
             return redirect('pengelola:login')
@@ -56,13 +55,17 @@ def register(request):
     return render(request, 'register.html', context)
 
 def login_user(request):
+    next_url = request.GET.get('next', None)
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            response = HttpResponseRedirect(reverse("pengelola:show_main")) 
+            if next_url:
+                response = HttpResponseRedirect(next_url)
+            else:
+                response = HttpResponseRedirect(reverse("pengelola:show_main")) 
             response.set_cookie('last_login', str(datetime.datetime.now()))
             return response
         else:
@@ -94,18 +97,30 @@ def tambah_buku(request):
         return HttpResponse(b"CREATED", status=201)
     return HttpResponseNotFound()
 
-def hapus_buku(request, id):
-    buku = Buku.objects.get(pk = id)
-    buku.delete()
-    return HttpResponseRedirect(reverse('main:show_main'))
-
+@csrf_exempt
 def edit_buku(request, id):
-    Buku = Buku.objects.get(pk = id)
-    form = FormBuku(request.POST or None, instance=Buku)
+    buku = get_object_or_404(Buku, text_number = id)
+    if request.method == 'POST' :
+        buku.title = request.POST.get("title2")
+        buku.language = request.POST.get("language2")
+        buku.first_name = request.POST.get('first_name2')
+        buku.last_name = request.POST.get('last_name2')
+        buku.year = request.POST.get('year2')
+        buku.subjects = request.POST.get('subjects2')
+        buku.bookshelves = request.POST.get('bookshelves2')
+        buku.save()
 
-    if form.is_valid() and request.method == "POST":
-        form.save()
-        return HttpResponseRedirect(reverse('main:show_main'))
+        return HttpResponse(b"UPDATED", status=202)
+    return HttpResponseNotFound()
 
-    context = {'form': form}
-    return render(request, "edit_product.html", context)
+@csrf_exempt
+def hapus_buku(request, id):
+    buku = get_object_or_404(Buku, text_number = id)
+    buku.delete()
+    return HttpResponse(b"DELETED", status=202)
+
+@csrf_exempt
+def emergency_hapus_buku(request, id):
+    buku = get_object_or_404(Buku, pk = id)
+    buku.delete()
+    return HttpResponse(b"DELETED", status=202)

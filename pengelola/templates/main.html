@@ -53,6 +53,9 @@
     </div>
 </body>
 
+{% block modal %}
+{% endblock modal%}
+
 <script>
     async function getData() {
         return fetch("{% url 'pengelola:display_books' %}").then((res) => res.json())
@@ -77,8 +80,11 @@
         document.getElementById("table_buku").innerHTML = htmlString
     }
 
+
     refreshData()
 </script>
+{% block funct %}
+{% endblock funct %}
 
 <style>
     .mysidebar{
