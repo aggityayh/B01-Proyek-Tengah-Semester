@@ -17,6 +17,27 @@
     Delete Book
 </button>
 
+<a href="{% url 'bookmarks:show_bookmarks' %}">
+    <button class="btn btn-secondary">
+        View Bookmarks
+    </button>
+</a>
+<a href="{% url 'booklist:show_booklist' %}">
+    <button class="btn btn-secondary">
+        View booklist
+    </button>
+</a>
+<a href="{% url 'review:show_ulasan' %}">
+    <button class="btn btn-secondary">
+        Review
+    </button>
+</a>
+<a href="{% url 'request_book:show_main' %}">
+    <button class="btn btn-secondary">
+        Book Request
+    </button>
+</a>
+
 {% endblock side %}
 
 {% block modal %}

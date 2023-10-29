@@ -5,15 +5,10 @@
     <div class="container-fluid">
         <h1 class="p-2 navbar-text flex-grow-1">Ancestral Reads</h1>
         
-        <h2 class="p-2 navbar-text">{{ username }}</h2>
+        <h2 class="p-2 navbar-text" style="font-size: 30px;">Selamat Datang, {{ username }}</h2>
         <a href="{% url 'pengelola:logout' %}">
             <button class="p-2 btn btn-warning">
                 Logout
-            </button>
-        </a>
-        <a href="{% url 'bookmarks:show_bookmarks' %}">
-            <button>
-                View Bookmarks
             </button>
         </a>
     </div>
@@ -22,9 +17,26 @@
 
 <nav class="sidebar mysidebar">
 {% block side %}
-
-<p>{{ status }}</p>
-<p>{{ username }}</p>
+<a href="{% url 'bookmarks:show_bookmarks' %}">
+    <button class="btn btn-secondary">
+        View Bookmarks
+    </button>
+</a>
+<a href="{% url 'booklist:show_booklist' %}">
+    <button class="btn btn-secondary">
+        View booklist
+    </button>
+</a>
+<a href="{% url 'review:show_ulasan' %}">
+    <button class="btn btn-secondary">
+        Review
+    </button>
+</a>
+<a href="{% url 'request_book:show_main' %}">
+    <button class="btn btn-secondary">
+        Book Request
+    </button>
+</a>
 
 {% comment %} lokasi tombol fungsi pengguna {% endcomment %}
 <tr>
@@ -78,7 +90,7 @@
             <td>${item.fields.language}</td>
             <td>${item.fields.subjects}</td>
             <td>${item.fields.bookshelves}</td>
-            <td><button class="add-bookmark" onclick="addBooks(${item.pk})">Add to Bookmark</button></td>
+            <td><button class="btn btn-secondary" onclick="addBooks(${item.pk})" id="btn_bookmarks">Add to Bookmark</button></td>
         </tr>` 
         })
         
@@ -111,9 +123,28 @@
     .mysidebar{
         height: 100%;
         padding-top: 80px;
-        width: 150px;
+        width: 160px;
         position: fixed;
         background: #ebe7e7;
+    }
+
+    .btn {
+        width: 150px;
+        margin-top: 30px;
+        margin-left: 5px;
+        background-color: #e6e2d3;
+        border-color: #e6e2d3;
+        color: black;
+    }
+
+    .btn:hover {
+        background-color: #96897f;
+        border-color: #96897f;
+    }
+
+    #btn_bookmarks {
+        background-color: #96897f;
+        color: white;
     }
 </style>
 {% endblock content %}
