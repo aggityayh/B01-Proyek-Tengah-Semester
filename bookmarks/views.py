@@ -18,7 +18,7 @@ from pengelola.models import Buku
 
 # Create your views here.
 def get_bookmark_json(request):
-    bookmark = Bookmark.objects.all()
+    bookmark = Bookmark.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize('json', bookmark))
 
 @csrf_exempt
@@ -38,6 +38,7 @@ def add_bookmark_ajax(request):
     
     return JsonResponse({'status': 'ok'})
 
+@login_required(login_url='/login/')
 def show_bookmarks(request):
     bookmarks = Bookmark.objects.all()
     # user = request.user
