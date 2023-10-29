@@ -1,9 +1,15 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
+# from caturapp.models import Pustakawan
 
 # Create your models here.
+# class Book(models.Model):
+#     # user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     title = models.CharField(max_length=255, default='')
+#     year = models.IntegerField(default=0)
 
-class Buku(models.Model):
+class Bookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     text_number = models.IntegerField(null=True, blank=True)
     title = models.TextField(null=True, blank=True)
     language = models.CharField(max_length=255 ,null=True, blank=True)
@@ -12,4 +18,4 @@ class Buku(models.Model):
     year = models.CharField(max_length=255 ,null=True, blank=True)
     subjects = models.TextField(null=True, blank=True)
     bookshelves = models.TextField(null=True, blank=True, default="-")
-
+    

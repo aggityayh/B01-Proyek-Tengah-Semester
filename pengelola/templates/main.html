@@ -11,7 +11,11 @@
                 Logout
             </button>
         </a>
-        
+        <a href="{% url 'bookmarks:show_bookmarks' %}">
+            <button>
+                View Bookmarks
+            </button>
+        </a>
     </div>
 </nav>
 
@@ -74,14 +78,31 @@
             <td>${item.fields.language}</td>
             <td>${item.fields.subjects}</td>
             <td>${item.fields.bookshelves}</td>
+            <td><button class="add-bookmark" onclick="addBooks(${item.pk})">Add to Bookmark</button></td>
         </tr>` 
         })
         
         document.getElementById("table_buku").innerHTML = htmlString
     }
 
-
     refreshData()
+
+    async function addBooks(bookId) {
+        const response = await fetch("{% url 'bookmarks:add_bookmark_ajax' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ bookId: bookId })
+        });
+
+        if (response.ok) {
+            alert('Book added to bookmarks');
+        } else {
+            alert('Failed to add book to bookmarks');
+        }
+    }
 </script>
 {% block funct %}
 {% endblock funct %}
