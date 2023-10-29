@@ -28,7 +28,6 @@ def add_bookmark_ajax(request):
     book_id = data.get('bookId')
     # print(book_id)
     book = Buku.objects.get(pk=book_id)
-    
     bookmark = Bookmark(text_number=book.text_number, title=book.title, language=book.language, first_name=book.first_name, last_name=book.last_name, year=book.year, subjects=book.subjects, bookshelves=book.bookshelves, user=request.user)
     bookmark.save()
     
@@ -58,6 +57,9 @@ def delete_bookmark_ajax(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return HttpResponseNotFound()
+    # bookmark = Bookmark.objects.get(pk=id)
+    # bookmark.delete()
+    # return HttpResponseRedirect(reverse('bookmarks:show_bookmarks'))
     
 def show_json(request):
     data = Bookmark.objects.all()
