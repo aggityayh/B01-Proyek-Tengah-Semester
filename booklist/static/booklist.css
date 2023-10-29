@@ -1,0 +1,81 @@
+body {
+    height: 770px;
+}
+header {
+    background-color: #b9936c;
+    height: 15%;
+    position: relative;
+}
+
+.title_header {
+    position: absolute;
+    left: 43%;
+    top: 30%;
+    display: inline-block;
+}
+
+.btn_header {
+    position: absolute;
+    right: 5%;
+    top: 35%;
+    display: inline-block;
+}
+
+.btn-primary, .btn-secondary {
+    background-color: #c4b7a6;
+    border-color: #c4b7a6;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    background-color: #e6e2d3;
+    border-color: #e6e2d3;
+}
+
+aside {
+    background-color: #dac292;
+    height: 80%;
+}
+
+aside > div {
+    height: 90%;
+    width: 100%;
+    overflow: auto;
+}
+
+table {
+    width: 100%;
+    margin-top: 20px;
+}
+
+table > thead {
+    position: sticky;
+    top: 0;
+    background-color: #dac292;
+}
+
+aside > table, th{
+    text-align: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    width: 11%;
+    height: 10px;
+}
+
+aside > table, td{
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: 10px;
+    overflow: hidden;
+}
+
+footer {
+    background-color: #e6e2d3;
+    height: 10%;
+}
+
+footer > p {
+    position: fixed;
+    right: 10px;
+}
