@@ -97,8 +97,8 @@ def add_product_ajax(request):
         year = request.POST.get("year")
         subjects = request.POST.get("subjects")
 
-        new_book = Product(title=title, language=language, first_name=first_name, last_name=last_name, year=year, subjects=subjects)
-        new_book.save()
+        new_product = Product(title=title, language=language, first_name=first_name, last_name=last_name, year=year, subjects=subjects)
+        new_product.save()
 
         return HttpResponse(b"CREATED", status=201)
     return HttpResponseNotFound()

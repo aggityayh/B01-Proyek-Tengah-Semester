@@ -215,14 +215,16 @@
 
 
     function addProduct() {
-        fetch("{% url 'request_book:add_product_ajax' %}", {
-            method: "POST",
-            body: new FormData(document.querySelector('#form'))
-        }).then(refreshProducts)
+    console.log("Function Called"); // Tambahkan ini untuk memeriksa apakah fungsi dijalankan
+    fetch("{% url 'request_book:add_product_ajax' %}", {
+        method: "POST",
+        body: new FormData(document.querySelector('#form'))
+    }).then(refreshProducts)
 
-        document.getElementById("form").reset()
-        return false
-    }
+    document.getElementById("form").reset()
+    return false
+}
+
 
     document.getElementById("button_add").onclick = addProduct
 
