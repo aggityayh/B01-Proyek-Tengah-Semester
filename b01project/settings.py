@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'request_book',
+    'pengelola',
 ]
 
 MIDDLEWARE = [
