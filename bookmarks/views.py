@@ -26,8 +26,13 @@ def get_bookmark_json(request):
 def add_bookmark_ajax(request):
     data = json.loads(request.body.decode('utf-8'))
     book_id = data.get('bookId')
-    # print(book_id)
     book = Buku.objects.get(pk=book_id)
+    
+    # Check if the book already exists in the bookmarks
+    existing_bookmark = Bookmark.objects.filter(text_number=book.text_number, user=request.user).first()
+    if existing_bookmark:
+        return JsonResponse({'status': 'error', 'message': 'Book already bookmarked'}, status=400)
+
     bookmark = Bookmark(text_number=book.text_number, title=book.title, language=book.language, first_name=book.first_name, last_name=book.last_name, year=book.year, subjects=book.subjects, bookshelves=book.bookshelves, user=request.user)
     bookmark.save()
     
@@ -64,26 +69,3 @@ def delete_bookmark_ajax(request):
 def show_json(request):
     data = Bookmark.objects.all()
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
-
-# @login_required(login_url='/login')
-# def show_main(request):
-#     # books = Book.objects.filter(book=request.book)
-#     books = Buku.objects.all()
-#     # bookmarks = Bookmark.objects.all()
-#     context = {
-#         'books': books,
-#         # 'bookmarks': bookmarks
-#     }
-#     return render(request, "dummymain.html", context)
-
-# def create_product(request):
-#     form = ProductForm(request.POST or None)
-
-#     if form.is_valid() and request.method == "POST":
-#         product = form.save(commit=False)
-#         product.user = request.user
-#         form.save()
-#         return HttpResponseRedirect(reverse('bookmarks:show_main'))
-
-#     context = {'form': form}
-#     return render(request, "create_product.html", context)
