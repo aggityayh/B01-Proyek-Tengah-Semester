@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<nav class="navbar fixed-top mb-2 navbar-light bg-light">
+    <div class="container-fluid">
+        <h1 class="p-2 navbar-text flex-grow-1">Ancestral Reads</h1>
+        
+        <h2 class="p-2 navbar-text">{{ username }}</h2>
+        <a href="{% url 'pengelola:logout' %}">
+            <button class="p-2 btn btn-warning">
+                Logout
+            </button>
+        </a>
+        
+    </div>
+</nav>
+
+
+<nav class="sidebar mysidebar">
+{% block side %}
+
+<p>{{ status }}</p>
+<p>{{ username }}</p>
+
+{% comment %} lokasi tombol fungsi pengguna {% endcomment %}
+<tr>
+
+</tr>
+<tr>
+
+</tr>
+
+{% endblock side %}
+</nav>
+
+<body class="mt-3" >
+    <div class="mx-3" style="padding-left: 150px; padding-top: 80px;">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <td>#</td>
+                    <td>Title</td>
+                    <td>First Name</td>
+                    <td>Last Name</td>
+                    <td>Year</td>
+                    <td>Language</td>
+                    <td>Subjects</td>
+                    <td>Type/Categories</td>
+                </tr>
+            </thead>
+            <tbody class="overflow-auto" id="table_buku" style="max-height: 400px;"></tbody>
+        </table>
+    </div>
+</body>
+
+{% block modal %}
+{% endblock modal%}
+
+<script>
+    async function getData() {
+        return fetch("{% url 'pengelola:display_books' %}").then((res) => res.json())
+    }
+    async function refreshData() {
+        document.getElementById("table_buku").innerHTML = ""
+        const Books = await getData()
+        let htmlString = ``
+        Books.forEach((item) => {
+            htmlString += `\n<tr>
+            <td>${item.fields.text_number}</td>
+            <td>${item.fields.title}</td>
+            <td>${item.fields.first_name}</td>
+            <td>${item.fields.last_name}</td>
+            <td>${item.fields.year}</td>
+            <td>${item.fields.language}</td>
+            <td>${item.fields.subjects}</td>
+            <td>${item.fields.bookshelves}</td>
+        </tr>` 
+        })
+        
+        document.getElementById("table_buku").innerHTML = htmlString
+    }
+
+
+    refreshData()
+</script>
+{% block funct %}
+{% endblock funct %}
+
+<style>
+    .mysidebar{
+        height: 100%;
+        padding-top: 80px;
+        width: 150px;
+        position: fixed;
+        background: #ebe7e7;
+    }
+</style>
+{% endblock content %}

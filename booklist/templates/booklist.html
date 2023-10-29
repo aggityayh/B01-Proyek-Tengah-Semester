@@ -13,7 +13,7 @@
         </div>
         <div class="btn_header">
             {% if user.is_anonymous %}
-            <a href="{% url 'pengelola:login' %}">
+            <a href="{% url 'pengelola:login' %}?next={% url 'booklist:show_booklist' %}">
                 <button type="button" class="btn btn-secondary">Login</button>                
             </a>
             <a href="{% url 'pengelola:register' %}">
@@ -26,13 +26,12 @@
             </a>
             {% endif %}
         </div>
-
     </header>
     <aside>
         <div>
             <table id="book_table">
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-xl">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Book</h1>
@@ -41,9 +40,12 @@
                             <div class="modal-body">
                                 <form id="form" onsubmit="return false;">
                                     {% csrf_token %}
-                                    <div class="mb-3">
-                                        <label for="buku" class="col-form-label">Buku:</label>
-                                        <select name="buku" id="buku" class="form-control" size="10">
+                                    <div class="input-group mb-3 mx-auto justify-content-center">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="inputGroupSelect01">Options</label>
+                                          </div>
+                                        <select name="buku" id="inputGroupSelect01" class="custom-select">
+                                            <option selected>Choose...</option>
                                             {% for book in books %}
                                                 <option value="{{book.pk}}">{{book.title}}</option>
                                             {% endfor %}
@@ -61,74 +63,104 @@
             </table>
         </div>
     </aside>
-    <footer></footer>
+    <footer>
+        <p>Muhammad Hanif - 2206029941 - PBP B</p>
+    </footer>
     <script>
         async function getBooks() {
-            return fetch("{% url 'booklist:get_book_json' %}").then((res) => res.json())
-        }
-        async function getBuku() {
-            return fetch("{% url 'booklist:get_buku_json' %}").then((res) => res.json())
-        }
-        async function refreshBook() {
-            document.getElementById("book_table").innerHTML = ""
-            const products = await getBooks()
-            let htmlString = `<thead>
-                <th>Text Number</th>
-                <th>Title</th>
-                <th>Language</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Year</th>
-                <th>Subject</th>
-                <th>Bookshelves</th>
-                <th></th>
-            </thead>`
+    return fetch("{% url 'booklist:get_book_json' %}").then((res) => res.json())
+}
+async function getBuku() {
+    return fetch("{% url 'booklist:get_buku_json' %}").then((res) => res.json())
+}
+async function refreshBook() {
+    document.getElementById("book_table").innerHTML = ""
+    const products = await getBooks()
+    let htmlString = `<thead>
+        <th>Title</th>
+        <th>Language</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Year</th>
+        <th>Subject</th>
+        <th>Bookshelves</th>
+        <th></th>
+    </thead>`
 
-            for (const item of products) {
-                htmlString += `\n<tbody>
-                <td>${item.fields.text_number}</td>
-                <td>${item.fields.title}</td>
-                <td>${item.fields.language}</td>
-                <td>${item.fields.first_name}</td>
-                <td>${item.fields.last_name}</td>
-                <td>${item.fields.year}</td>
-                <td>${item.fields.subjects}</td>
-                <td>${item.fields.bookshelves}</td>
-                <td><input type="button" onclick="deleteBook(${item.pk})" value="Delete"></td>
-                </tbody>`
-            }
-            document.getElementById("book_table").innerHTML = htmlString
-            document.getElementById("button_add").onclick = addBook
+    for (const item of products) {
+        htmlString += `\n<tbody>
+        <td>${item.fields.title}</td>
+        <td>${item.fields.language}</td>
+        <td>${item.fields.first_name}</td>
+        <td>${item.fields.last_name}</td>
+        <td>${item.fields.year}</td>
+        <td>${item.fields.subjects}</td>
+        <td>${item.fields.bookshelves}</td>
+        <td><input type="button" onclick="deleteBook(${item.pk})" value="Delete"></td>
+        </tbody>`
+    }
+    document.getElementById("book_table").innerHTML = htmlString
+    document.getElementById("button_add").onclick = addBook
+}
+async function refreshBuku() {
+    document.getElementById("buku").innerHTML = ""
+    const products = await getBuku()
+    let htmlString = ``
+    for (const item of products) {
+        htmlString += `
+        <option value="${item.pk}">${item.fields.title}</option>
+        `
+    }
+    document.getElementById("buku").innerHTML = htmlString
+}
+refreshBook()
+refreshBuku()
+function addBook() {
+    fetch("{% url 'booklist:add_book_ajax' %}", {
+        method: "POST",
+        body: new FormData(document.querySelector('#form'))
+    }).then(response => {
+        if (response.status === 201) {
+            return response.text()
+        } else if (response.status === 404) {
+            return "Resource Not Found."
+        } else {
+            return "Request failed with status code " + response.status
         }
-        async function refreshBuku() {
-            document.getElementById("buku").innerHTML = ""
-            const products = await getBuku()
-            let htmlString = ``
-            for (const item of products) {
-                htmlString += `
-                <option value="${item.pk}">${item.fields.title}</option>
-                `
-            }
-            document.getElementById("buku").innerHTML = htmlString
-        }
+    }).then(data => {
+        alert(data)
         refreshBook()
         refreshBuku()
-        function addBook() {
-            fetch("{% url 'booklist:add_book_ajax' %}", {
-                method: "POST",
-                body: new FormData(document.querySelector('#form'))
-            }).then(refreshBook, refreshBuku)
-
-            document.getElementById("form").reset()
-            return false
-        }
-        function deleteBook(id) {
-            console.log("Tombol delete ditekan")
-            mydata = {pk:id}
+    }).catch(error => {
+        console.error("Request failed", error)
+    })
+    document.getElementById("form").reset()
+    return false
+    }
+    function deleteBook(id) {
+        if (confirm("You want delete this book from booklist?") == true) {
+        mydata = {pk:id}
             fetch("{% url 'booklist:delete_book_ajax' %}", {
                 method: "DELETE",
                 body: JSON.stringify(mydata)    
-            }).then(refreshBook, refreshBuku)
+            }).then(response => {
+                if (response.status === 201) {
+                    return response.text()
+                } else if (response.status === 404) {
+                    return "Resource Not Found."
+                } else {
+                    return "Request failed with status code " + response.status
+                }
+            }).then(data => {
+                refreshBook()
+                refreshBuku()
+            }).catch(error => {
+                console.error("Request failed", error)
+            }) 
+        } else {
+            refreshBook()
+            refreshBuku()
         }
+    }
     </script>
 {% endblock content %}

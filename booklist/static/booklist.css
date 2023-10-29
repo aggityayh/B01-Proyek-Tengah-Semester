@@ -2,14 +2,14 @@ body {
     height: 770px;
 }
 header {
-    background-color: rgb(160, 160, 160);
+    background-color: #b9936c;
     height: 15%;
     position: relative;
 }
 
 .title_header {
     position: absolute;
-    left: 40%;
+    left: 43%;
     top: 30%;
     display: inline-block;
 }
@@ -21,25 +21,36 @@ header {
     display: inline-block;
 }
 
+.btn-primary, .btn-secondary {
+    background-color: #c4b7a6;
+    border-color: #c4b7a6;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    background-color: #e6e2d3;
+    border-color: #e6e2d3;
+}
+
 aside {
-    background-color: gray;
+    background-color: #dac292;
     height: 80%;
 }
 
 aside > div {
-    height: 95%;
+    height: 90%;
     width: 100%;
     overflow: auto;
 }
 
 table {
     width: 100%;
+    margin-top: 20px;
 }
 
 table > thead {
     position: sticky;
     top: 0;
-    background-color: gray;
+    background-color: #dac292;
 }
 
 aside > table, th{
@@ -47,7 +58,7 @@ aside > table, th{
     padding-left: 20px;
     padding-right: 20px;
     width: 11%;
-    height: 70px;
+    height: 10px;
 }
 
 aside > table, td{
@@ -56,9 +67,15 @@ aside > table, td{
     padding-top: 10px;
     padding-bottom: 10px;
     height: 10px;
+    overflow: hidden;
 }
 
 footer {
-    background-color: gray;
+    background-color: #e6e2d3;
     height: 10%;
+}
+
+footer > p {
+    position: fixed;
+    right: 10px;
 }

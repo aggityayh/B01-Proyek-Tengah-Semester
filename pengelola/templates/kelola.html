@@ -1,0 +1,190 @@
+{% extends 'main.html' %}
+
+{% block side %}
+
+<p class="mb-3">{{ status }}</p>
+<p class="mb-3">{{ username }}</p>
+
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Add Book
+</button>
+
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#editModal">
+    Edit Book
+</button>
+
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#deleteModal">
+    Delete Book
+</button>
+
+{% endblock side %}
+
+{% block modal %}
+<div class="modal fade" id="exampleModal" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable overflow-auto mylimiter">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Book</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form" onsubmit="return false;">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="text_number" class="col-form-label">Text Number:</label>
+                        <input type="number" class="form-control" id="text_number" name="text_number"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="title" class="col-form-label">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="first_name" class="col-form-label">Author First Name:</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="last_name" class="col-form-label">Author Last Name:</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="year" class="col-form-label">Year:</label>
+                        <input type="text" class="form-control" id="year" name="year"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="language" class="col-form-label">Language:</label>
+                        <input type="text" class="form-control" id="language" name="language"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subjects" class="col-form-label">Subjects:</label>
+                        <input type="text" class="form-control" id="subjects" name="subjects"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bookshelves" class="col-form-label">Type/Categories:</label>
+                        <input type="text" class="form-control" id="bookshelves" name="bookshelves"></input>
+                    </div>
+                </form>>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Book</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="0" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable overflow-auto mylimiter">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editModalLabel">Edit Books</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form2" onsubmit="return false;">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <label for="edit_id" class="col-form-label">Insert book number(not id!):</label>
+                        <input type="number" class="form-control" id="edit_id" name="edit_id"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="title2" class="col-form-label">Title:</label>
+                        <input type="text" class="form-control" id="title2" name="title2"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="first_name2" class="col-form-label">Author First Name:</label>
+                        <input type="text" class="form-control" id="first_name2" name="first_name2"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="last_name2" class="col-form-label">Author Last Name:</label>
+                        <input type="text" class="form-control" id="last_name2" name="last_name2"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="year2" class="col-form-label">Year:</label>
+                        <input type="text" class="form-control" id="year2" name="year2"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="language2" class="col-form-label">Language:</label>
+                        <input type="text" class="form-control" id="language2" name="language2"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subjects2" class="col-form-label">Subjects:</label>
+                        <input type="text" class="form-control" id="subjects2" name="subjects2"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bookshelves2" class="col-form-label">Type/Categories:</label>
+                        <input type="text" class="form-control" id="bookshelves2" name="bookshelves2"></input>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="button_edit" data-bs-dismiss="modal">Edit Book</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" tabindex="0" id="deleteModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable overflow-auto mylimiter">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Books</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p>Insert book number(not id!):</p>
+            <input type="text" class="form-control" id="data_id"></input>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-warning" id="button_delete" data-bs-dismiss="modal">Delete Book</button>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock modal%}
+
+{% block funct %}
+<script>
+    function addBook() {
+        fetch("{% url 'pengelola:tambah_buku' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshData)
+
+        document.getElementById("form").reset()
+        return false
+    }
+    document.getElementById("button_add").onclick = addBook
+
+    function editBook() {
+        let number = document.getElementById("edit_id").value
+        fetch("{% url 'pengelola:show_main' %}" + "edit/" + number, {
+            method : "POST",
+            body: new FormData(document.querySelector('#form2'))
+        }).then(refreshData)
+
+        document.getElementById("form2").reset()
+        return false
+    }
+    document.getElementById("button_edit").onclick = editBook
+
+    function deleteBook() {
+        let number = document.getElementById("data_id").value
+        fetch("{% url 'pengelola:show_main' %}" + "hapus/" + number, {
+            method : "DELETE",
+        }).then(refreshData)
+        return false
+    }
+    document.getElementById("button_delete").onclick = deleteBook
+
+
+</script>
+
+<style>
+    mylimiter{
+        height: 600px;
+    }
+</style>
+{% endblock funct %}

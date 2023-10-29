@@ -21,7 +21,7 @@ def show_booklist(request):
         user = None
 
     context = {
-        'nameapp': 'AncestralReads',
+        'nameapp': 'BookList',
         'user': user,
         'books': books
     }
@@ -49,7 +49,6 @@ def add_book_ajax(request):
 
 @csrf_exempt
 def delete_book_ajax(request):
-    print(request.body)
     if request.method == "DELETE":
         try:
             id = json.loads(request.body.decode('utf-8')).get('pk')
