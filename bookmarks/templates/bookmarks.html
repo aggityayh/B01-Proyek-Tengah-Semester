@@ -152,45 +152,12 @@
     </body>
     <script>
         // Your JavaScript code here
-        async function getBooks() {
-                const response = await fetch("{% url 'bookmarks:get_bookmark_json' %}");
-                return response.json();
-            }
-
-        
-            async function deleteBookmark(bookmarkId) {
-            try {
-                console.log("tombol delete kepencet")
-                const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-
-                const response = await fetch(`/delete-bookmark/${parseInt(bookmarkId)}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': csrftoken,
-                    },
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Delete request successful', data);
-                    refreshBooks();
-                } else {
-                    console.error('Delete request failed:', response.status);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
         async function refreshBooks() {
             console.log("kerefresh")
             document.getElementById("bookmark-list").innerHTML = ""
-            // bookmarkList.innerHTML = "";
             const bookmarks = await getBooks()
             let htmlString = ``
             bookmarks.forEach(bookmark => {
-                // const bookmarkDiv = document.createElement("div");
-                // bookmarkDiv.classList.add("bookmark");
                 htmlString += `
                     <div class="card mb-4">
                         <div class="card-body">
@@ -206,11 +173,30 @@
                         </div>
                     </div>
                 `
-                // bookmarkList.appendChild(bookmarkDiv);
             })
             document.getElementById("bookmark-list").innerHTML = htmlString
         }
-
         refreshBooks();
+
+        async function getBooks() {
+                const response = await fetch("{% url 'bookmarks:get_bookmark_json' %}");
+                return response.json();
+        }
+
+        function deleteBookmark(id) {
+            mydata = {pk:id}
+                fetch("{% url 'bookmarks:delete_bookmark_ajax' %}", {
+                    method: 'DELETE',
+                    body: JSON.stringify(mydata)
+                }).then(response => {
+                    if (response.ok) {
+                    const data = response.json();
+                    console.log('Delete request successful', data);
+                    refreshBooks();
+                } else {
+                    console.error('Delete request failed:', response.status);
+                }
+                });
+        }
     </script>
 {% endblock content %}

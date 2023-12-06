@@ -38,6 +38,7 @@ def register(request):
         username = request.POST.get('username')
         password_1 = request.POST.get('password1')
         password_2 = request.POST.get('password2')
+        is_staff = bool(request.POST.get('is_staff'))
         is_user_already_exist = User.objects.filter(username=username).exists()
         if (username == '') or (password_1 == '') or (password_2 ==''):
             return JsonResponse({
@@ -55,12 +56,18 @@ def register(request):
               "message": "Password harus sama"
             }, status=401)
         elif (not is_user_already_exist) and (password_1==password_2):
-            user = User.objects.create_user(username=username,password=password_1)
+            user = User.objects.create_user(username=username,password=password_1, is_staff=is_staff)
             user.save()
-            return JsonResponse({
-                "status": True,
-                "username": user.username,
-            }, status=200)
+            if (is_staff):
+                return JsonResponse({
+                    "status": True,
+                    "username": user.username,
+                })
+            else:
+                return JsonResponse({
+                    "status": True,
+                    "username": user.username,
+                }, status=200)
         else:
             return JsonResponse({
               "status": False,
