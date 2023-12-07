@@ -52,6 +52,12 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
+CORS_ORIGIN_WHITELIST = [
+    'http://127.0.0.1:3000',
+    'http://localhost:4200',
+    'https://ancestralreads-b01-tk.pbp.cs.ui.ac.id'
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
