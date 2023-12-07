@@ -33,6 +33,10 @@ def get_book_json(request):
     book_item = Book.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize('json', book_item))
 
+def get_book_flutter(request):
+    data = Book.objects.all()   
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
 def get_buku_json(request):
     title_list = Book.objects.values_list('title', flat=True)
     buku_item = Buku.objects.exclude(title__in=title_list)
