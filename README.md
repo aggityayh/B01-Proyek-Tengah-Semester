@@ -6,11 +6,14 @@
 - Gina Afia (2206830334)
 - Muhammad Hanif (2206029941)
 
-:mailbox_with_mail:**Tema Aplikasi**
+📬:**Tema Aplikasi**
 Website Perpustakaan Buku Lawas
 
-:mega:**Nama website:**
+📣:**Nama website:**
 *AncestralReads*
+
+🔗:**Tautan Aplikasi**
+[AncestralReads](http://ancestralreads-b01-tk.pbp.cs.ui.ac.id)
 
 💾 :floppy_disk:---***Cerita Aplikasi***---💾 :floppy_disk:
 

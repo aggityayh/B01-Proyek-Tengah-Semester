@@ -1,5 +1,8 @@
 from django.shortcuts import render
 
+import json
+from .models import Product
+
 from request_book.models import Product
 from request_book.forms import ProductForm
 
@@ -100,8 +103,15 @@ def add_product_ajax(request):
         user = request.user
         amount = 0
 
-        new_product = Product(title=title, language=language, first_name=first_name, last_name=last_name, year=year, subjects=subjects, user=user, amount=amount)
-        new_product.save()
+        with open('path/to/pengelola/dataset.json', 'r') as file:
+            dataset = json.load(file)
+        
+        for book in dataset:
+            if book['title'] == title: 
+                return HttpResponse("This book is already in the dataset and cannot be requested again.")
+            else: 
+                new_product = Product(title=title, language=language, first_name=first_name, last_name=last_name, year=year, subjects=subjects, user=user, amount=amount)
+                new_product.save()
 
         return HttpResponse(b"CREATED", status=201)
     return HttpResponseNotFound()
