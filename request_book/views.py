@@ -94,9 +94,11 @@ def edit_product(request, id):
 def add_product_ajax(request):
     print(request.POST)
     if request.method == 'POST':
-        book_temp = Buku.objects.get(pk=request.POST.get("addBook_field"))
 
         title = request.POST.get("title")
+        if Buku.objects.filter(title=title).exists():
+            return HttpResponse(b"DUPLICATE", status=201)
+
         language = request.POST.get("language")
         first_name = request.POST.get("first_name")
         last_name = request.POST.get("last_name")
@@ -105,8 +107,6 @@ def add_product_ajax(request):
         user = request.user
         amount = 0
 
-        if book_temp.title in title:
-            return HttpResponse(b"DUPLICATE", status=201)
         new_product = Product(title=title, language=language, first_name=first_name, last_name=last_name, year=year, subjects=subjects, user=user, amount=amount)
         new_product.save()
 
