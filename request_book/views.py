@@ -1,13 +1,12 @@
 from django.shortcuts import render
 
-import json
-from .models import Product
-
 from request_book.models import Product
 from request_book.forms import ProductForm
-
+import json
 from django.http import *
 from django.urls import reverse
+
+from pengelola.models import Buku
 
 from django.http import HttpResponse
 from django.core import serializers
@@ -16,7 +15,6 @@ from django.shortcuts import redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages  
 
-import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -26,12 +24,14 @@ from django.views.decorators.csrf import csrf_exempt
 
 def show_main(request):
     products = Product.objects.filter(user=request.user)
+    books = Buku.objects.exclude(title__in=products)
     total_items = products.count()
 
     context = {
         'name': request.user.username,
         'class': 'PBP B',
         'products': products,
+        'books': books,
         'total_items': total_items,
         'last_login': request.COOKIES['last_login'],
     }
@@ -94,6 +94,8 @@ def edit_product(request, id):
 def add_product_ajax(request):
     print(request.POST)
     if request.method == 'POST':
+        book_temp = Buku.objects.get(pk=request.POST.get("addBook_field"))
+
         title = request.POST.get("title")
         language = request.POST.get("language")
         first_name = request.POST.get("first_name")
@@ -103,15 +105,10 @@ def add_product_ajax(request):
         user = request.user
         amount = 0
 
-        with open('path/to/pengelola/dataset.json', 'r') as file:
-            dataset = json.load(file)
-        
-        for book in dataset:
-            if book['title'] == title: 
-                return HttpResponse("This book is already in the dataset and cannot be requested again.")
-            else: 
-                new_product = Product(title=title, language=language, first_name=first_name, last_name=last_name, year=year, subjects=subjects, user=user, amount=amount)
-                new_product.save()
+        if book_temp.title in title:
+            return HttpResponse(b"DUPLICATE", status=201)
+        new_product = Product(title=title, language=language, first_name=first_name, last_name=last_name, year=year, subjects=subjects, user=user, amount=amount)
+        new_product.save()
 
         return HttpResponse(b"CREATED", status=201)
     return HttpResponseNotFound()
