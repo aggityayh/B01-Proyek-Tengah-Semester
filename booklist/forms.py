@@ -2,11 +2,16 @@ from django import forms
 from pengelola.models import Buku
 from booklist.models import Book
 
-class addBook_form(forms.Form): 
+class addBook_form(forms.Form):
     def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
         super(addBook_form, self).__init__(*args, **kwargs)
-        title_list = Book.objects.values_list('title', flat=True)
-        Bukus = Buku.objects.exclude(title__in=title_list)
+        title_list = Book.objects.filter(user=request.user)
+        if title_list:
+            title_list = title_list.values_list('title', flat=True)
+            Bukus = Buku.objects.exclude(title__in=title_list)
+        else:
+            Bukus = Buku.objects.all()
         field_buku = ((None, 'Select...'),)
         for book in Bukus:
             field_buku += ((book.pk, book.title),)
