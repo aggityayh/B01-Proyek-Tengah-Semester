@@ -7,10 +7,11 @@ from pengelola.models import Buku
 from pengelola.forms import FormBuku, FormUser
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, JsonResponse
 from django.core import serializers
 from django.urls import reverse
 import datetime
+import json
 
 @login_required(login_url='/login/')
 def show_main(request):
@@ -112,6 +113,34 @@ def edit_buku(request, id):
 
         return HttpResponse(b"UPDATED", status=202)
     return HttpResponseNotFound()
+
+@csrf_exempt
+def create_buku_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+
+        new_book = Buku.objects.create(
+            user = request.user,
+            name = data["name"],
+            price = int(data["price"]),
+            description = data["description"],
+            text_number = int(data[""]),
+            title = data[""],
+            language = data[""],
+            first_name = data[""],
+            last_name = data[""],
+            year = data[""],
+            subjects = data[""],
+            bookshelves = data[""]
+        )
+
+        new_book.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
 
 @csrf_exempt
 def hapus_buku(request, id):

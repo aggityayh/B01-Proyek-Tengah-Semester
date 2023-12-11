@@ -1,6 +1,7 @@
 from django.urls import path
 from pengelola.views import register , get_books, hapus_buku, tambah_buku
 from pengelola.views import login_user,edit_buku, display_books, logout_user, show_main
+from pengelola.views import create_buku_flutter
 
 
 app_name = 'pengelola'
@@ -16,4 +17,5 @@ urlpatterns = [
     path("login/", login_user, name='login'),
     path("edit/<int:id>", edit_buku, name="edit_buku"),
     path("logout/", logout_user, name="logout"),
+    path("create-book", create_buku_flutter, name="create_book")
 ]
