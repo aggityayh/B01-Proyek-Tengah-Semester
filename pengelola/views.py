@@ -122,17 +122,14 @@ def create_buku_flutter(request):
 
         new_book = Buku.objects.create(
             user = request.user,
-            name = data["name"],
-            price = int(data["price"]),
-            description = data["description"],
-            text_number = int(data[""]),
-            title = data[""],
-            language = data[""],
-            first_name = data[""],
-            last_name = data[""],
-            year = data[""],
-            subjects = data[""],
-            bookshelves = data[""]
+            text_number = int(data["text_number"]),
+            title = data["title"],
+            language = data["language"],
+            first_name = data["first_name"],
+            last_name = data["last_name"],
+            year = data["year"],
+            subjects = data["subjects"],
+            bookshelves = data["bookshelves"]
         )
 
         new_book.save()
