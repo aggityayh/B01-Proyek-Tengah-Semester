@@ -24,4 +24,5 @@ urlpatterns = [
     path('', include('pengelola.urls')),
     path('review/', include('review.urls')),
     path('booklist/', include('booklist.urls')),
+    path('auth/', include('authentication.urls')),
 ]

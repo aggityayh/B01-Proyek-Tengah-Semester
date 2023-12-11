@@ -27,8 +27,6 @@ def add_bookmark_ajax(request):
     data = json.loads(request.body.decode('utf-8'))
     book_id = data.get('bookId')
     book = Buku.objects.get(pk=book_id)
-    
-    # Check if the book already exists in the bookmarks
     existing_bookmark = Bookmark.objects.filter(text_number=book.text_number, user=request.user).first()
     if existing_bookmark:
         return JsonResponse({'status': 'error', 'message': 'Book already bookmarked'}, status=400)
@@ -41,31 +39,25 @@ def add_bookmark_ajax(request):
 @login_required(login_url='/login/')
 def show_bookmarks(request):
     bookmarks = Bookmark.objects.all()
-    # user = request.user
     context = {
         'bookmarks': bookmarks
     }
     return render(request, "bookmarks.html", context)
 
 @csrf_exempt
-# @require_POST
 def delete_bookmark_ajax(request):
     if request.method == "DELETE":
         try:
             data = json.loads(request.body.decode('utf-8'))
-            bookmark_id = data.get('bookmarkId')
-            print(bookmark_id)
+            bookmark_id = data.get('pk')
             bookmark = Bookmark.objects.get(pk=bookmark_id)
             bookmark.delete()
-            return JsonResponse({'status': 'ok'})
+            return HttpResponse(b"DELETED", status=201)
         except Bookmark.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Bookmark not found'}, status=404)
+            return HttpResponse(b"Bookmark Not Found", status=404)
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+            return HttpResponse(b"Error", status=500)
     return HttpResponseNotFound()
-    # bookmark = Bookmark.objects.get(pk=id)
-    # bookmark.delete()
-    # return HttpResponseRedirect(reverse('bookmarks:show_bookmarks'))
     
 def show_json(request):
     data = Bookmark.objects.all()
