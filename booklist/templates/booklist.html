@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block meta %}
-<link rel="stylesheet" href="{% static 'booklist.css' %}">
+<link rel="stylesheet" href="{% static 'css/booklist.css' %}">
 {% endblock meta %}
 
 {% block content %}
@@ -43,13 +43,8 @@
                                     <div class="input-group mb-3 mx-auto justify-content-center">
                                         <div class="input-group-prepend">
                                             <label class="input-group-text" for="inputGroupSelect01">Options</label>
-                                          </div>
-                                        <select name="buku" id="inputGroupSelect01" class="custom-select">
-                                            <option selected>Choose...</option>
-                                            {% for book in books %}
-                                                <option value="{{book.pk}}">{{book.title}}</option>
-                                            {% endfor %}
-                                        </select>
+                                        </div>
+                                        {{ form.addBook_field }}
                                     </div>
                                 </form>
                             </div>
@@ -66,101 +61,11 @@
     <footer>
         <p>Muhammad Hanif - 2206029941 - PBP B</p>
     </footer>
-    <script>
-        async function getBooks() {
-    return fetch("{% url 'booklist:get_book_json' %}").then((res) => res.json())
-}
-async function getBuku() {
-    return fetch("{% url 'booklist:get_buku_json' %}").then((res) => res.json())
-}
-async function refreshBook() {
-    document.getElementById("book_table").innerHTML = ""
-    const products = await getBooks()
-    let htmlString = `<thead>
-        <th>Title</th>
-        <th>Language</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Year</th>
-        <th>Subject</th>
-        <th>Bookshelves</th>
-        <th></th>
-    </thead>`
-
-    for (const item of products) {
-        htmlString += `\n<tbody>
-        <td>${item.fields.title}</td>
-        <td>${item.fields.language}</td>
-        <td>${item.fields.first_name}</td>
-        <td>${item.fields.last_name}</td>
-        <td>${item.fields.year}</td>
-        <td>${item.fields.subjects}</td>
-        <td>${item.fields.bookshelves}</td>
-        <td><input type="button" onclick="deleteBook(${item.pk})" value="Delete"></td>
-        </tbody>`
-    }
-    document.getElementById("book_table").innerHTML = htmlString
-    document.getElementById("button_add").onclick = addBook
-}
-async function refreshBuku() {
-    document.getElementById("buku").innerHTML = ""
-    const products = await getBuku()
-    let htmlString = ``
-    for (const item of products) {
-        htmlString += `
-        <option value="${item.pk}">${item.fields.title}</option>
-        `
-    }
-    document.getElementById("buku").innerHTML = htmlString
-}
-refreshBook()
-refreshBuku()
-function addBook() {
-    fetch("{% url 'booklist:add_book_ajax' %}", {
-        method: "POST",
-        body: new FormData(document.querySelector('#form'))
-    }).then(response => {
-        if (response.status === 201) {
-            return response.text()
-        } else if (response.status === 404) {
-            return "Resource Not Found."
-        } else {
-            return "Request failed with status code " + response.status
-        }
-    }).then(data => {
-        alert(data)
-        refreshBook()
-        refreshBuku()
-    }).catch(error => {
-        console.error("Request failed", error)
-    })
-    document.getElementById("form").reset()
-    return false
-    }
-    function deleteBook(id) {
-        if (confirm("You want delete this book from booklist?") == true) {
-        mydata = {pk:id}
-            fetch("{% url 'booklist:delete_book_ajax' %}", {
-                method: "DELETE",
-                body: JSON.stringify(mydata)    
-            }).then(response => {
-                if (response.status === 201) {
-                    return response.text()
-                } else if (response.status === 404) {
-                    return "Resource Not Found."
-                } else {
-                    return "Request failed with status code " + response.status
-                }
-            }).then(data => {
-                refreshBook()
-                refreshBuku()
-            }).catch(error => {
-                console.error("Request failed", error)
-            }) 
-        } else {
-            refreshBook()
-            refreshBuku()
-        }
-    }
+    <script> // For Fetch URL.
+        const getBookJsonUrl = "{% url 'booklist:get_book_json' %}";
+        const getBukuJsonUrl = "{% url 'booklist:get_buku_json' %}";
+        const addBookJsonUrl = "{% url 'booklist:add_book_ajax' %}";
+        const deleteBookJsonUrl = "{% url 'booklist:delete_book_ajax' %}";
     </script>
+    <script src="{% static 'js/jsbooklist.js' %}"></script>
 {% endblock content %}

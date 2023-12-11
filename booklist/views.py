@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from booklist.models import Book
+from booklist.forms import addBook_form
 from pengelola.models import Buku
 from django.core import serializers
 from django.contrib.auth.forms import UserCreationForm
@@ -23,13 +24,18 @@ def show_booklist(request):
     context = {
         'nameapp': 'BookList',
         'user': user,
-        'books': books
+        'books': books,
+        'form': addBook_form()
     }
     return render(request, "booklist.html", context)
 
 def get_book_json(request):
     book_item = Book.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize('json', book_item))
+
+def get_book_flutter(request):
+    data = Book.objects.all()   
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def get_buku_json(request):
     title_list = Book.objects.values_list('title', flat=True)
@@ -39,7 +45,10 @@ def get_buku_json(request):
 @csrf_exempt
 def add_book_ajax(request):
     if request.method == 'POST':
-        book_temp = Buku.objects.get(pk=request.POST.get("buku"))
+        book_temp = Buku.objects.get(pk=request.POST.get("addBook_field"))
+        title_list = Book.objects.values_list('title', flat=True)
+        if book_temp.title in title_list:
+            return HttpResponse(b"DUPLICATE", status=201)
         new_book = Book(text_number=book_temp.text_number, title=book_temp.title, language=book_temp.language, first_name=book_temp.first_name, last_name=book_temp.last_name, year=book_temp.year, subjects=book_temp.subjects, bookshelves=book_temp.bookshelves, user=request.user)
         new_book.save()
         
