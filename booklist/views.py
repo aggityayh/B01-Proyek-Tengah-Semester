@@ -25,7 +25,7 @@ def show_booklist(request):
         'nameapp': 'BookList',
         'user': user,
         'books': books,
-        'form': addBook_form()
+        'form': addBook_form(request=request)
     }
     return render(request, "booklist.html", context)
 
@@ -33,12 +33,8 @@ def get_book_json(request):
     book_item = Book.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize('json', book_item))
 
-def get_book_flutter(request):
-    data = Book.objects.all()   
-    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
-
 def get_buku_json(request):
-    title_list = Book.objects.values_list('title', flat=True)
+    title_list = Book.objects.filter(user=request.user).values_list('title', flat=True)
     buku_item = Buku.objects.exclude(title__in=title_list)
     return HttpResponse(serializers.serialize('json', buku_item))
 
@@ -46,7 +42,7 @@ def get_buku_json(request):
 def add_book_ajax(request):
     if request.method == 'POST':
         book_temp = Buku.objects.get(pk=request.POST.get("addBook_field"))
-        title_list = Book.objects.values_list('title', flat=True)
+        title_list = Book.objects.filter(user=request.user).values_list('title', flat=True)
         if book_temp.title in title_list:
             return HttpResponse(b"DUPLICATE", status=201)
         new_book = Book(text_number=book_temp.text_number, title=book_temp.title, language=book_temp.language, first_name=book_temp.first_name, last_name=book_temp.last_name, year=book_temp.year, subjects=book_temp.subjects, bookshelves=book_temp.bookshelves, user=request.user)
@@ -57,11 +53,24 @@ def add_book_ajax(request):
     return HttpResponseNotFound()
 
 @csrf_exempt
+def add_book_flutter(request):
+    if request.method == 'POST':
+        id = json.loads(request.body.decode('utf-8')).get('pk')
+        book_temp = Buku.objects.get(pk=id)
+        title_list = Book.objects.filter(user=request.user).values_list('title', flat=True)
+        if book_temp.title in title_list:
+            return JsonResponse({"status": "duplicate"}, status=200)
+        new_book = Book(text_number=book_temp.text_number, title=book_temp.title, language=book_temp.language, first_name=book_temp.first_name, last_name=book_temp.last_name, year=book_temp.year, subjects=book_temp.subjects, bookshelves=book_temp.bookshelves, user=request.user)
+        new_book.save()
+        return JsonResponse({"status": "success"}, status=200)
+    return JsonResponse({"status": "error"}, status=400)
+
+@csrf_exempt
 def delete_book_ajax(request):
     if request.method == "DELETE":
         try:
             id = json.loads(request.body.decode('utf-8')).get('pk')
-            book_temp = Book.objects.get(pk=id)
+            book_temp = Book.objects.filter(user=request.user).get(pk=id)
             book_temp.delete()
             
             return HttpResponse(b"DELETED", status=201)
@@ -69,3 +78,15 @@ def delete_book_ajax(request):
             return HttpResponse(b"Not Found", status=201)
 
     return HttpResponseNotFound()
+
+@csrf_exempt
+def delete_book_flutter(request):
+    if request.method == "POST":
+        try:
+            id = json.loads(request.body.decode('utf-8')).get('pk')
+            book_temp = Book.objects.filter(user=request.user).get(pk=id, user=request.user)
+            book_temp.delete()
+            return JsonResponse({"status": "success"}, status=200)
+        except:
+            return JsonResponse({"status": "not found"}, status=200)
+    return JsonResponse({"status": "error"}, status=401)

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 class Ulasan(models.Model):
     buku = models.ForeignKey(Buku, on_delete=models.CASCADE)
+    
     reviewer_name = models.CharField(max_length=255)
     review_text = models.TextField()
     rating = models.IntegerField()  
