@@ -18,6 +18,7 @@ from pengelola.models import Buku
 
 # Create your views here.
 def get_bookmark_json(request):
+    # if request.user.is_authenticated:
     bookmark = Bookmark.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize('json', bookmark))
 
@@ -27,6 +28,7 @@ def add_bookmark_ajax(request):
     data = json.loads(request.body.decode('utf-8'))
     book_id = data.get('bookId')
     book = Buku.objects.get(pk=book_id)
+
     existing_bookmark = Bookmark.objects.filter(text_number=book.text_number, user=request.user).first()
     if existing_bookmark:
         return JsonResponse({'status': 'error', 'message': 'Book already bookmarked'}, status=400)
@@ -58,7 +60,45 @@ def delete_bookmark_ajax(request):
         except Exception as e:
             return HttpResponse(b"Error", status=500)
     return HttpResponseNotFound()
+
+# @csrf_exempt
+# def delete_bookmark_ajax(request, bookmark_id):
+#    if request.method == "DELETE":
+#        try:
+#            bookmark = Bookmark.objects.get(pk=bookmark_id)
+#            bookmark.delete()
+#            return HttpResponse(b"DELETED", status=201)
+#        except Bookmark.DoesNotExist:
+#            return HttpResponse(b"Bookmark Not Found", status=404)
+#        except Exception as e:
+#            return HttpResponse(b"Error", status=500)
+#    return HttpResponseNotFound()
+
     
 def show_json(request):
     data = Bookmark.objects.all()
-    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+    return HttpResponse(serializers.serialize("json", data))
+
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+
+        new_book = Bookmark.objects.create(
+            user = request.user,
+            text_number = int(data["text_number"]), 
+            title = data["title"], 
+            language = data["language"], 
+            first_name = data["first_name"],
+            last_name = data["last_name"], 
+            year = data["year"], 
+            subjects = data["subjects"], 
+            bookshelves = data["bookshelves"]
+        )
+
+        new_book.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
