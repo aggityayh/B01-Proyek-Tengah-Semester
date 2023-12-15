@@ -121,13 +121,13 @@ def edit_buku_flutter(request, id):
     buku = get_object_or_404(Buku, pk = id)
     if request.method == 'POST' :
         data = json.loads(request.body)
-        buku.text_number = int(data["text_number"]),
-        buku.title = data["title"],
-        buku.language = data["language"],
-        buku.first_name = data["first_name"],
-        buku.last_name = data["last_name"],
-        buku.year = data["year"],
-        buku.subjects = data["subjects"],
+        buku.text_number = int(data["text_number"])
+        buku.title = data["title"]
+        buku.language = data["language"]
+        buku.first_name = data["first_name"]
+        buku.last_name = data["last_name"]
+        buku.year = data["year"]
+        buku.subjects = data["subjects"]
         buku.bookshelves = data["bookshelves"]
         buku.save()
 
