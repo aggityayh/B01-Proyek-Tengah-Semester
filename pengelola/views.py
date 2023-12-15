@@ -39,7 +39,7 @@ def display_books(request):
     data = Buku.objects.all()
     return HttpResponse(serializers.serialize("json", data))
 
-
+@csrf_exempt
 def register(request):
     form = FormUser()
 
@@ -56,6 +56,7 @@ def register(request):
     context = {'form':form}
     return render(request, 'register.html', context)
 
+@csrf_exempt
 def login_user(request):
     next_url = request.GET.get('next', None)
     if request.method == 'POST':
