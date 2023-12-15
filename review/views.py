@@ -8,6 +8,7 @@ from pengelola.models import Buku
 from django.core import serializers
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
@@ -80,10 +81,10 @@ def create_product_flutter(request):
         data = json.loads(request.body)
 
         new_product = Ulasan.objects.create(
-            user = request.user,
-            nama = data["reviewer_name"],
+            user = get_object_or_404(User, username = data["username"]),
+            reviewer_name = data["reviewer_name"],
             rating = int(data["rating"]),
-            deskripsi = data["review_text"],
+            review_text = data["review_text"],
             buku = get_object_or_404(Buku, pk = data["id_buku"])
         )
 
