@@ -49,6 +49,15 @@ def get_ulasan_json(request):
     review = Ulasan.objects.filter(user=request.user).values('pk', 'buku__title', 'reviewer_name', 'review_text', 'rating', 'review_date','user')
     return JsonResponse(list(review), safe=False)
 
+@csrf_exempt
+def get_title_json(request):
+    if request.method == 'POST':
+        id = json.loads(request.body.decode('utf-8')).get('pk')
+        buku = Buku.objects.get(pk=id).title
+        return JsonResponse(buku, safe=False)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
 
 @csrf_exempt
 def delete_ajax(request):
