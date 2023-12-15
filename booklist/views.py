@@ -53,6 +53,19 @@ def add_book_ajax(request):
     return HttpResponseNotFound()
 
 @csrf_exempt
+def add_book_flutter(request):
+    if request.method == 'POST':
+        id = json.loads(request.body.decode('utf-8')).get('pk')
+        book_temp = Buku.objects.get(pk=id)
+        title_list = Book.objects.filter(user=request.user).values_list('title', flat=True)
+        if book_temp.title in title_list:
+            return JsonResponse({"status": "duplicate"}, status=200)
+        new_book = Book(text_number=book_temp.text_number, title=book_temp.title, language=book_temp.language, first_name=book_temp.first_name, last_name=book_temp.last_name, year=book_temp.year, subjects=book_temp.subjects, bookshelves=book_temp.bookshelves, user=request.user)
+        new_book.save()
+        return JsonResponse({"status": "success"}, status=200)
+    return JsonResponse({"status": "error"}, status=400)
+
+@csrf_exempt
 def delete_book_ajax(request):
     if request.method == "DELETE":
         try:
