@@ -116,24 +116,45 @@ def edit_buku(request, id):
     return HttpResponseNotFound()
 
 @csrf_exempt
+def edit_buku_flutter(request, id):
+    buku = get_object_or_404(Buku, pk = id)
+    if request.method == 'POST' :
+        data = json.loads(request.body)
+        buku.text_number = int(data["text_number"]),
+        buku.title = data["title"],
+        buku.language = data["language"],
+        buku.first_name = data["first_name"],
+        buku.last_name = data["last_name"],
+        buku.year = data["year"],
+        buku.subjects = data["subjects"],
+        buku.bookshelves = data["bookshelves"]
+        buku.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
+@csrf_exempt
+def hapus_buku_flutter(request, id):
+    buku = get_object_or_404(Buku, text_number = id)
+    buku.delete()
+    return JsonResponse({"status": "success"}, status=200)
+
+@csrf_exempt
 def create_buku_flutter(request):
     if request.method == 'POST':
         
         data = json.loads(request.body)
 
         new_book = Buku.objects.create(
-            user = request.user,
-            name = data["name"],
-            price = int(data["price"]),
-            description = data["description"],
-            text_number = int(data[""]),
-            title = data[""],
-            language = data[""],
-            first_name = data[""],
-            last_name = data[""],
-            year = data[""],
-            subjects = data[""],
-            bookshelves = data[""]
+            text_number = int(data["text_number"]),
+            title = data["title"],
+            language = data["language"],
+            first_name = data["first_name"],
+            last_name = data["last_name"],
+            year = data["year"],
+            subjects = data["subjects"],
+            bookshelves = data["bookshelves"]
         )
 
         new_book.save()
