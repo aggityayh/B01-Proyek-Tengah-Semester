@@ -29,7 +29,7 @@ def add_bookmark_ajax(request):
     book_id = data.get('bookId')
     book = Buku.objects.get(pk=book_id)
 
-    existing_bookmark = Bookmark.objects.filter(text_number=book.text_number, user=request.user).first()
+    existing_bookmark = Bookmark.objects.filter(title=book.title, user=request.user).first()
     if existing_bookmark:
         return JsonResponse({'status': 'error', 'message': 'Book already bookmarked'}, status=400)
 
@@ -54,6 +54,7 @@ def delete_bookmark_ajax(request):
             bookmark_id = data.get('pk')
             bookmark = Bookmark.objects.get(pk=bookmark_id)
             bookmark.delete()
+            
             return HttpResponse(b"DELETED", status=201)
         except Bookmark.DoesNotExist:
             return HttpResponse(b"Bookmark Not Found", status=404)
