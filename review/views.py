@@ -1,6 +1,6 @@
 import json
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.shortcuts import render, redirect
 from .models import Ulasan
 from .forms import ReviewForm
@@ -72,6 +72,26 @@ def show_json(request):
 # def get_book_json(request):
 #     book_item = Book.objects.filter(user=request.user)
 #     return HttpResponse(serializers.serialize('json', book_item))
+
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+
+        new_product = Ulasan.objects.create(
+            user = request.user,
+            nama = data["reviewer_name"],
+            rating = int(data["rating"]),
+            deskripsi = data["review_text"],
+            buku = get_object_or_404(Buku, pk = data["id_buku"])
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
 
 
 
