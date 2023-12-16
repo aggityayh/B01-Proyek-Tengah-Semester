@@ -19,5 +19,5 @@ urlpatterns = [
     path("logout/", logout_user, name="logout"),
     path("create-book/", create_buku_flutter, name="create_book"),
     path("edit-flutter/<int:id>", edit_buku_flutter, name="edit_flutter"),
-    path("hapus-flutter/<int:id>", hapus_buku_flutter, name="hapus_flutter"),
+    path("hapus-flutter/", hapus_buku_flutter, name="hapus_flutter"),
 ]

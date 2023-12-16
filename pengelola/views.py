@@ -136,10 +136,14 @@ def edit_buku_flutter(request, id):
         return JsonResponse({"status": "error"}, status=401)
 
 @csrf_exempt
-def hapus_buku_flutter(request, id):
-    buku = get_object_or_404(Buku, text_number = id)
-    buku.delete()
-    return JsonResponse({"status": "success"}, status=200)
+def hapus_buku_flutter(request):
+    try:
+        id = json.loads(request.body.decode('utf-8')).get('pk')
+        buku = Buku.objects.filter(pk=id).get(pk=id)
+        buku.delete()
+        return JsonResponse({"status": "success"}, status=200)
+    except:
+        return JsonResponse({"status": "not found"}, status=401)
 
 @csrf_exempt
 def create_buku_flutter(request):
