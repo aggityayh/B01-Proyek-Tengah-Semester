@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from django.contrib.auth.models import User
 from request_book.models import Product
 from request_book.forms import ProductForm
 import json
@@ -127,7 +127,7 @@ def add_product_flutter(request):
         last_name = request.POST.get("last_name")
         year = request.POST.get("year")
         subjects = request.POST.get("subjects")
-        user = request.user
+        user = get_object_or_404(User, username=request.POST.get('username'))
         amount = 0
 
         new_product = Product(title=title, language="", first_name=first_name, last_name="", year=year, subjects="", user=user, amount=amount)
