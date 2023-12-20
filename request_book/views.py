@@ -115,25 +115,25 @@ def add_product_ajax(request):
 
 @csrf_exempt
 def add_product_flutter(request):
-    print(request.POST)
     if request.method == 'POST':
-
-        title = request.POST.get("title")
+        data = json.loads(request.body.decode('utf-8'))
+        title = data.get("title")
         if Buku.objects.filter(title=title).exists():
-            return JsonResponse(b"DUPLICATE", status=401)
-
-        language = request.POST.get("language")
-        first_name = request.POST.get("first_name")
-        last_name = request.POST.get("last_name")
-        year = request.POST.get("year")
-        subjects = request.POST.get("subjects")
-        user = get_object_or_404(User, username=request.POST.get('username'))
+            return HttpResponse(b"DUPLICATE", status=401)
+        if Product.objects.filter(title=title).exists():
+            return HttpResponse(b"DUPLICATE", status=401)
+        language = data.get("language")
+        first_name = data.get("first_name")
+        last_name = data.get("last_name")
+        year = data.get("year")
+        subjects = data.get("subjects")
+        user = get_object_or_404(User, username=data.get('username'))
         amount = 0
 
         new_product = Product(title=title, language="", first_name=first_name, last_name="", year=year, subjects="", user=user, amount=amount)
-        new_product.save()
+        new_product.save()  
 
-        return JsonResponse(b"CREATED", status=201)
+        return HttpResponse(b"CREATED", status=201)
 
 def delete_product_flutter(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
