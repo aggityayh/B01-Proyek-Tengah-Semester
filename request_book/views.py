@@ -130,7 +130,7 @@ def add_product_flutter(request):
         user = request.user
         amount = 0
 
-        new_product = Product(title=title, language=language, first_name=first_name, last_name=last_name, year=year, subjects=subjects, user=user, amount=amount)
+        new_product = Product(title=title, language="", first_name=first_name, last_name="", year=year, subjects="", user=user, amount=amount)
         new_product.save()
 
         return JsonResponse(b"CREATED", status=201)

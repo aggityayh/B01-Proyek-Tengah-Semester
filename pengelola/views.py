@@ -7,10 +7,11 @@ from pengelola.models import Buku
 from pengelola.forms import FormBuku, FormUser
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, JsonResponse
 from django.core import serializers
 from django.urls import reverse
 import datetime
+import json
 
 @login_required(login_url='/login/')
 def show_main(request):
@@ -38,12 +39,13 @@ def display_books(request):
     data = Buku.objects.all()
     return HttpResponse(serializers.serialize("json", data))
 
-
+@csrf_exempt
 def register(request):
     form = FormUser()
 
     if request.method == "POST":
         form = FormUser(request.POST)
+        print(request.POST)
         if form.is_valid():
             user = form.save()
             if user.is_staff == True:
@@ -54,6 +56,7 @@ def register(request):
     context = {'form':form}
     return render(request, 'register.html', context)
 
+@csrf_exempt
 def login_user(request):
     next_url = request.GET.get('next', None)
     if request.method == 'POST':
@@ -112,6 +115,59 @@ def edit_buku(request, id):
 
         return HttpResponse(b"UPDATED", status=202)
     return HttpResponseNotFound()
+
+@csrf_exempt
+def edit_buku_flutter(request, id):
+    buku = get_object_or_404(Buku, pk = id)
+    if request.method == 'POST' :
+        data = json.loads(request.body)
+        buku.text_number = int(data["text_number"])
+        buku.title = data["title"]
+        buku.language = data["language"]
+        buku.first_name = data["first_name"]
+        buku.last_name = data["last_name"]
+        buku.year = data["year"]
+        buku.subjects = data["subjects"]
+        buku.bookshelves = data["bookshelves"]
+        buku.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
+@csrf_exempt
+def hapus_buku_flutter(request):
+    try:
+        id = json.loads(request.body.decode('utf-8')).get('pk')
+        buku = Buku.objects.filter(pk=id).get(pk=id)
+        buku.delete()
+        return JsonResponse({"status": "success"}, status=200)
+    except:
+        return JsonResponse({"status": "not found"}, status=401)
+
+@csrf_exempt
+def create_buku_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+
+        new_book = Buku.objects.create(
+            text_number = int(data["text_number"]),
+            title = data["title"],
+            language = data["language"],
+            first_name = data["first_name"],
+            last_name = data["last_name"],
+            year = data["year"],
+            subjects = data["subjects"],
+            bookshelves = data["bookshelves"]
+        )
+
+        new_book.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
 
 @csrf_exempt
 def hapus_buku(request, id):
