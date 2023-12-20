@@ -15,6 +15,8 @@ urlpatterns = [
     path('decrease_amount/<int:product_id>/', decrease_amount, name='decrease_amount'),
     path('get-product/', get_product_json, name='get_product_json'),
     path('create-product-ajax/', add_product_ajax, name='add_product_ajax'),
+    path('create-product-flutter/', add_product_flutter, name='add_product_flutter'),
+    path('delete-product-flutter/', delete_product_flutter, name='delete_product_flutter'),
     path('edit-product/<int:id>', edit_product, name='edit_product'),
     path('delete-product-ajax/<int:product_id>/', delete_product_ajax, name='delete_product_ajax'),
 ]
